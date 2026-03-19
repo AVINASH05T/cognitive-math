@@ -6,9 +6,145 @@
     <title>Cognitive Math - Online Learning Platform</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Add config file first -->
+    <script src="js/config.js"></script>
+    <style>
+        /* Additional styles for better image display */
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-image-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            background: var(--light-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border: 3px solid var(--primary-light);
+            overflow: hidden;
+        }
+
+        .stat-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--primary-dark);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .teacher-card {
+            background: var(--light-bg);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
+        }
+
+        .teacher-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .teacher-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+        }
+
+        .course-card {
+            position: relative;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .course-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .video-card {
+            flex: 0 0 300px;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+        }
+        
+        .loading-spinner {
+            border: 4px solid var(--light-bg);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <!-- Top Bar with Help Icon and Social Links -->
+    <!-- Top Bar with Help Icon -->
     <div class="top-bar">
         <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Help%20Query'">
             <i class="fas fa-question-circle"></i>
@@ -66,84 +202,77 @@
                 </div>
             </div>
             <div class="hero-image">
-                <img src="" alt="Math Learning">
+                <img src="https://illustrations.popsy.co/white/mathematics.svg" alt="Math Learning">
             </div>
         </div>
     </section>
 
     <!-- Stats Section - Horizontal Scroll -->
-    <section class="scroll-section">
+    <section class="stats-section">
         <div class="section-title">
             <h2>Our Impact</h2>
             <p>Making a difference in students' lives</p>
         </div>
-        <div class="scroll-container">
-            <div class="scroll-row" id="stats-container">
+        <div class="stats-scroll-container">
+            <div class="stats-row" id="stats-container">
                 <div class="loading-spinner"></div>
             </div>
         </div>
     </section>
 
-    <!-- Popular Courses - Horizontal Scroll with View All Link -->
-    <section class="scroll-section" style="background: var(--light-bg);">
-        <div class="section-header-with-link">
+    <!-- Popular Courses -->
+    <section class="courses-section">
+        <div class="section-title">
             <h2>Popular Courses</h2>
-            <a href="courses.html" class="view-all-link">View All Courses <i class="fas fa-arrow-right"></i></a>
+            <p>Choose from our wide range of mathematics courses</p>
         </div>
-        <div class="scroll-container">
-            <div class="scroll-row" id="courses-container">
-                <div class="loading-spinner"></div>
-            </div>
+        <div class="courses-grid" id="courses-container">
+            <div class="loading-spinner"></div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="courses.html" class="btn-primary">View All Courses →</a>
         </div>
     </section>
 
-    <!-- Teachers Section - Horizontal Scroll -->
-    <section class="scroll-section">
+    <!-- Teachers Section -->
+    <section class="teachers-section">
         <div class="section-title">
             <h2>Our Expert Teachers</h2>
             <p>Learn from experienced mathematics educators</p>
         </div>
-        <div class="scroll-container">
-            <div class="scroll-row" id="teachers-container">
-                <div class="loading-spinner"></div>
-            </div>
+        <div class="teachers-grid" id="teachers-container">
+            <div class="loading-spinner"></div>
         </div>
     </section>
 
-    <!-- About Section - Horizontal Scroll -->
-    <section class="scroll-section" style="background: var(--light-bg);">
+    <!-- About Section -->
+    <section class="about-section" id="about-section">
         <div class="section-title">
             <h2>About Us</h2>
             <p>Learn more about Cognitive Math</p>
         </div>
-        <div class="scroll-container">
-            <div class="scroll-row" id="about-container">
-                <div class="loading-spinner"></div>
-            </div>
+        <div class="about-grid" id="about-container">
+            <div class="loading-spinner"></div>
         </div>
     </section>
 
-    <!-- YouTube Videos Section - Horizontal Scroll -->
-    <section class="scroll-section" id="videos-section" style="display: none;">
+    <!-- YouTube Videos Section -->
+    <section class="videos-section" id="videos-section" style="display: none;">
         <div class="section-title">
             <h2>Cognitive Math on YouTube</h2>
             <p>Watch our latest videos and learn math the cognitive way</p>
         </div>
-        <div class="scroll-container">
-            <div class="scroll-row" id="videos-container"></div>
-        </div>
+        <div class="videos-scroll" id="videos-container"></div>
     </section>
 
-    <!-- Testimonials - Horizontal Scroll -->
-    <section class="scroll-section" style="background: var(--light-bg);">
+    <!-- Testimonials -->
+    <section class="testimonials-section">
         <div class="section-title">
             <h2>What Our Students Say</h2>
             <p>Real stories from real learners</p>
         </div>
-        <div class="scroll-container">
-            <div class="scroll-row" id="testimonials-container">
-                <div class="loading-spinner"></div>
-            </div>
+        <div class="testimonials-grid" id="testimonials-container">
+            <div class="loading-spinner"></div>
         </div>
     </section>
 
@@ -162,9 +291,7 @@
             <div class="footer-section">
                 <h3>Cognitive Math</h3>
                 <p>Making mathematics accessible and enjoyable through cognitive learning techniques.</p>
-                <div class="social-links" id="social-links">
-                    <!-- Social links will be loaded dynamically -->
-                </div>
+                <div class="social-links" id="social-links"></div>
             </div>
             <div class="footer-section">
                 <h3>Quick Links</h3>
@@ -282,7 +409,11 @@
         // Load all site content
         async function loadSiteContent() {
             try {
-                const res = await fetch('/api/site-content');
+                const statsContainer = document.getElementById('stats-container');
+                if (statsContainer) statsContainer.innerHTML = '<div class="loading-spinner"></div>';
+                
+                // Use API_URL from config.js
+                const res = await fetch(`${API_URL}/api/site-content`);
                 const data = await res.json();
                 console.log('Site content loaded:', data);
 
@@ -339,6 +470,13 @@
                     });
                     if (socialHtml) {
                         socialFooter.innerHTML = socialHtml;
+                    } else {
+                        socialFooter.innerHTML = `
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-youtube"></i></a>
+                        `;
                     }
                 }
 
@@ -349,13 +487,12 @@
                 }
 
                 // Stats
-                const statsContainer = document.getElementById('stats-container');
-                if (data.stats && data.stats.length) {
+                if (data.stats && data.stats.length && statsContainer) {
                     statsContainer.innerHTML = data.stats.map(stat => {
                         const imageUrl = stat.image 
                             ? stat.image.startsWith('http') 
                                 ? stat.image 
-                                : `${window.location.origin}${stat.image}`
+                                : stat.image
                             : 'https://img.icons8.com/fluency/96/000000/bar-chart.png';
                         
                         return `
@@ -371,7 +508,71 @@
                             </div>
                         `;
                     }).join('');
-                } else {
+                }
+
+                // Teachers
+                const teachersContainer = document.getElementById('teachers-container');
+                if (data.teachers && data.teachers.length && teachersContainer) {
+                    teachersContainer.innerHTML = data.teachers.map(teacher => {
+                        const imageUrl = teacher.image 
+                            ? teacher.image.startsWith('http') 
+                                ? teacher.image 
+                                : teacher.image
+                            : 'https://img.icons8.com/fluency/96/000000/teacher.png';
+                        
+                        return `
+                            <div class="teacher-card">
+                                <img src="${imageUrl}" 
+                                     class="teacher-image" 
+                                     alt="${teacher.name}"
+                                     onerror="this.src='https://img.icons8.com/fluency/96/000000/teacher.png'; this.onerror=null;">
+                                <div class="teacher-name">${teacher.name}</div>
+                                <div class="teacher-qualification">${teacher.qualification}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                // About Sections
+                const aboutContainer = document.getElementById('about-container');
+                if (data.aboutSections && data.aboutSections.length && aboutContainer) {
+                    aboutContainer.innerHTML = data.aboutSections.map(about => `
+                        <div class="about-card">
+                            <div class="about-icon">
+                                <i class="fas ${about.icon || 'fa-star'}"></i>
+                            </div>
+                            <h3>${about.title}</h3>
+                            <p>${about.description}</p>
+                        </div>
+                    `).join('');
+                }
+
+                // YouTube Videos
+                if (data.videos && data.videos.length) {
+                    document.getElementById('videos-section').style.display = 'block';
+                    const videosContainer = document.getElementById('videos-container');
+                    videosContainer.innerHTML = data.videos.map(video => {
+                        const videoId = extractYouTubeId(video.url);
+                        return `
+                            <div class="video-card" onclick="window.open('${video.url}', '_blank')">
+                                <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg" class="video-thumbnail" alt="${video.title}">
+                                <div class="video-info">
+                                    <div class="video-title">${video.title}</div>
+                                    <div class="video-channel">
+                                        <i class="fab fa-youtube" style="color: #FF0000;"></i>
+                                        Cognitive Math
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (err) {
+                console.error('Error loading content:', err);
+                // Show fallback content
+                const statsContainer = document.getElementById('stats-container');
+                if (statsContainer) {
                     statsContainer.innerHTML = `
                         <div class="stat-card">
                             <div class="stat-image-container">
@@ -403,126 +604,28 @@
                         </div>
                     `;
                 }
-
-                // Teachers
-                const teachersContainer = document.getElementById('teachers-container');
-                if (data.teachers && data.teachers.length) {
-                    teachersContainer.innerHTML = data.teachers.map(teacher => {
-                        const imageUrl = teacher.image 
-                            ? teacher.image.startsWith('http') 
-                                ? teacher.image 
-                                : `${window.location.origin}${teacher.image}`
-                            : 'https://img.icons8.com/fluency/96/000000/teacher.png';
-                        
-                        return `
-                            <div class="teacher-card">
-                                <img src="${imageUrl}" 
-                                     class="teacher-image" 
-                                     alt="${teacher.name}"
-                                     onerror="this.src='https://img.icons8.com/fluency/96/000000/teacher.png'; this.onerror=null;">
-                                <div class="teacher-name">${teacher.name}</div>
-                                <div class="teacher-qualification">${teacher.qualification}</div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-              // About Sections - Add this to loadSiteContent function
-const aboutContainer = document.getElementById('about-container');
-if (aboutContainer) {
-    if (data.aboutSections && data.aboutSections.length) {
-        aboutContainer.innerHTML = data.aboutSections.map(about => `
-            <div class="about-card">
-                <div class="about-icon">
-                    <i class="fas ${about.icon || 'fa-star'}"></i>
-                </div>
-                <h3>${about.title}</h3>
-                <p>${about.description}</p>
-            </div>
-        `).join('');
-    } else {
-        // Default about sections
-        aboutContainer.innerHTML = `
-            <div class="about-card">
-                <div class="about-icon"><i class="fas fa-brain"></i></div>
-                <h3>Cognitive Approach</h3>
-                <p>We use proven cognitive learning techniques to make math concepts stick.</p>
-            </div>
-            <div class="about-card">
-                <div class="about-icon"><i class="fas fa-users"></i></div>
-                <h3>Individual Attention</h3>
-                <p>Small class sizes ensure every student gets the attention they deserve.</p>
-            </div>
-            <div class="about-card">
-                <div class="about-icon"><i class="fas fa-chart-line"></i></div>
-                <h3>Track Progress</h3>
-                <p>Regular assessments and feedback to monitor improvement.</p>
-            </div>
-        `;
-    }
-}
-
-                // YouTube Videos
-                if (data.videos && data.videos.length) {
-                    document.getElementById('videos-section').style.display = 'block';
-                    const videosContainer = document.getElementById('videos-container');
-                    videosContainer.innerHTML = data.videos.map(video => {
-                        const videoId = extractYouTubeId(video.url);
-                        return `
-                            <div class="video-card" onclick="window.open('${video.url}', '_blank')">
-                                <img src="https://img.youtube.com/vi/${videoId}/mqdefault.jpg" class="video-thumbnail" alt="${video.title}">
-                                <div class="video-info">
-                                    <div class="video-title">${video.title}</div>
-                                    <div class="video-channel">
-                                        <i class="fab fa-youtube" style="color: #FF0000;"></i> Cognitive Math
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                }
-
-            } catch (err) {
-                console.error('Error loading content:', err);
-                // Fallback content
-                document.getElementById('stats-container').innerHTML = `
-                    <div class="stat-card">
-                        <div class="stat-image-container">
-                            <img src="https://img.icons8.com/fluency/96/000000/student-male.png" class="stat-image">
-                        </div>
-                        <div class="stat-number">100+</div>
-                        <div class="stat-label">Students</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-image-container">
-                            <img src="https://img.icons8.com/fluency/96/000000/online-learning.png" class="stat-image">
-                        </div>
-                        <div class="stat-number">10+</div>
-                        <div class="stat-label">Courses</div>
-                    </div>
-                `;
             }
         }
 
-        // Load popular courses (first 6 for horizontal scroll)
+        // Load popular courses
         async function loadCourses() {
             try {
-                const res = await fetch('/api/courses');
-                const courses = await res.json();
-                
                 const container = document.getElementById('courses-container');
+                if (!container) return;
+                
+                const res = await fetch(`${API_URL}/api/courses`);
+                const courses = await res.json();
                 
                 if (courses.length === 0) {
                     container.innerHTML = '<p style="text-align:center; width:100%;">No courses available yet.</p>';
                     return;
                 }
 
-                // Show first 6 courses in horizontal scroll
-                container.innerHTML = courses.slice(0, 6).map(course => {
+                container.innerHTML = courses.slice(0, 3).map(course => {
                     const imageUrl = course.image 
                         ? course.image.startsWith('http') 
                             ? course.image 
-                            : `${window.location.origin}${course.image}`
+                            : course.image
                         : 'https://img.icons8.com/fluency/96/000000/math.png';
                     
                     return `
@@ -560,10 +663,11 @@ if (aboutContainer) {
         // Load testimonials
         async function loadTestimonials() {
             try {
-                const res = await fetch('/api/testimonials');
-                const testimonials = await res.json();
-                
                 const container = document.getElementById('testimonials-container');
+                if (!container) return;
+                
+                const res = await fetch(`${API_URL}/api/testimonials`);
+                const testimonials = await res.json();
                 
                 if (testimonials.length === 0) {
                     container.innerHTML = '<p style="text-align:center; width:100%;">No testimonials yet.</p>';
@@ -591,6 +695,33 @@ if (aboutContainer) {
                 !toggle.contains(e.target)) {
                 mobileMenu.classList.remove('active');
             }
+        });
+
+        // Add back button for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const backButton = document.createElement('div');
+            backButton.className = 'mobile-back';
+            backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Back';
+            backButton.style.cssText = 'display: none; position: fixed; top: 10px; left: 10px; z-index: 2500; background: var(--primary); color: white; padding: 10px 15px; border-radius: 30px; font-size: 14px; cursor: pointer; box-shadow: var(--shadow-md); align-items: center; gap: 5px;';
+            backButton.onclick = function() {
+                if (document.referrer) {
+                    history.back();
+                } else {
+                    window.location.href = 'index.html';
+                }
+            };
+            document.body.appendChild(backButton);
+            
+            function updateBackButton() {
+                if (window.innerWidth <= 768) {
+                    backButton.style.display = 'flex';
+                } else {
+                    backButton.style.display = 'none';
+                }
+            }
+            
+            updateBackButton();
+            window.addEventListener('resize', updateBackButton);
         });
 
         // Initialize

@@ -237,6 +237,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ message: 'Error registering user' });
     }
 });
+
 // Change password (authenticated)
 router.post('/change-password', protect, async (req, res) => {
     try {

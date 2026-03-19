@@ -6,6 +6,7 @@
     <title>Student Dashboard - Cognitive Math</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/config.js"></script>
     <style>
         .dashboard-container {
             max-width: 1400px;
@@ -709,7 +710,7 @@
         // Load profile image for header
         async function loadProfileImage() {
             try {
-                const res = await fetch('/api/users/profile', {
+                const res = await fetch(`${API_URL}/api/users/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const userData = await res.json();
@@ -725,7 +726,7 @@
         // Load logo and social links
         async function loadSiteContent() {
             try {
-                const res = await fetch('/api/site-content');
+                const res = await fetch(`${API_URL}/api/site-content`);
                 const data = await res.json();
                 
                 // Logo
@@ -763,7 +764,7 @@
         // Load user profile
         async function loadProfile() {
             try {
-                const res = await fetch('/api/users/profile', {
+                const res = await fetch(`${API_URL}/api/users/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 
@@ -788,7 +789,7 @@
         // Load enrolled courses
         async function loadEnrolledCourses() {
             try {
-                const res = await fetch('/api/registrations/my', {
+                const res = await fetch(`${API_URL}/api/registrations/my`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -886,7 +887,7 @@
         // Load leaderboard
         async function loadLeaderboard() {
             try {
-                const res = await fetch('/api/users/leaderboard', {
+                const res = await fetch(`${API_URL}/api/users/leaderboard`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -953,7 +954,7 @@
             submitBtn.disabled = true;
 
             try {
-                const res = await fetch('/api/testimonials', {
+                const res = await fetch(`${API_URL}/api/testimonials`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

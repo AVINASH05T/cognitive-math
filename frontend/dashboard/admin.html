@@ -7,6 +7,7 @@
     <!-- Correct path to CSS file -->
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/config.js"></script>
     <style>
         /* Admin-specific styles */
         .admin-container {
@@ -1192,7 +1193,7 @@
         // Load profile image for header
         async function loadProfileImage() {
             try {
-                const res = await fetch('/api/users/profile', {
+                const res = await fetch(`${API_URL}/api/users/profile`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const userData = await res.json();
@@ -1238,8 +1239,8 @@
         // Load overview stats
         async function loadOverview() {
             try {
-                const users = await fetch('/api/users', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
-                const courses = await fetch('/api/courses', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
+                const users = await fetch(`${API_URL}/api/users`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
+                const courses = await fetch(`${API_URL}/api/courses`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
                 
                 document.getElementById('overview-students').textContent = users.filter(u => u.role === 'student').length;
                 document.getElementById('overview-courses').textContent = courses.length;
@@ -1247,7 +1248,7 @@
                 document.getElementById('total-courses-mini').textContent = courses.length;
                 
                 try {
-                    const testimonials = await fetch('/api/testimonials/admin', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
+                    const testimonials = await fetch(`${API_URL}/api/testimonials/admin`, { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
                     document.getElementById('overview-testimonials').textContent = testimonials.length;
                     document.getElementById('total-testimonials-mini').textContent = testimonials.length;
                 } catch (err) {
@@ -1288,7 +1289,7 @@
             try {
                 container.innerHTML = '<div class="loading-spinner-small" style="margin: 2rem auto;"></div>';
                 
-                const res = await fetch('/api/site-content');
+                const res = await fetch(`${API_URL}/api/site-content`);
                 if (!res.ok) throw new Error('Failed to load');
                 
                 const data = await res.json();
@@ -1344,12 +1345,12 @@
 
                 console.log('Saving about sections:', aboutSections);
 
-                const getRes = await fetch('/api/site-content');
+                const getRes = await fetch(`${API_URL}/api/site-content`);
                 const data = await getRes.json();
                 
                 data.aboutSections = aboutSections;
                 
-                const updateRes = await fetch('/api/site-content', {
+                const updateRes = await fetch(`${API_URL}/api/site-content`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1387,7 +1388,7 @@
         // ===== SOCIAL LINKS FUNCTIONS =====
         async function loadSocialLinks() {
             try {
-                const res = await fetch('/api/site-content');
+                const res = await fetch(`${API_URL}/api/site-content`);
                 const data = await res.json();
                 
                 if (data.socialLinks) {
@@ -1438,11 +1439,11 @@
             };
 
             try {
-                const res = await fetch('/api/site-content');
+                const res = await fetch(`${API_URL}/api/site-content`);
                 const data = await res.json();
                 data.socialLinks = socialLinks;
                 
-                const updateRes = await fetch('/api/site-content', {
+                const updateRes = await fetch(`${API_URL}/api/site-content`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1464,7 +1465,7 @@
         // ===== ANNOUNCEMENT FUNCTIONS =====
         async function loadCoursesForAnnouncement() {
             try {
-                const res = await fetch('/api/courses', {
+                const res = await fetch(`${API_URL}/api/courses`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const courses = await res.json();
@@ -1500,7 +1501,7 @@
             }
 
             try {
-                const usersRes = await fetch('/api/users', {
+                const usersRes = await fetch(`${API_URL}/api/users`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const users = await usersRes.json();
@@ -1537,12 +1538,12 @@
             }
 
             try {
-                const courseRes = await fetch(`/api/courses/${courseId}`, {
+                const courseRes = await fetch(`${API_URL}/api/courses/${courseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const course = await courseRes.json();
                 
-                const regRes = await fetch(`/api/registrations/course/${courseId}`, {
+                const regRes = await fetch(`${API_URL}/api/registrations/course/${courseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const registrations = await regRes.json();
@@ -1598,7 +1599,7 @@
             }
 
             try {
-                const regRes = await fetch(`/api/registrations/course/${currentCourseId}`, {
+                const regRes = await fetch(`${API_URL}/api/registrations/course/${currentCourseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const registrations = await regRes.json();
@@ -1632,7 +1633,7 @@
             if (!courseId) return;
             
             try {
-                const courseRes = await fetch(`/api/courses/${courseId}`, {
+                const courseRes = await fetch(`${API_URL}/api/courses/${courseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const course = await courseRes.json();
@@ -1699,7 +1700,7 @@
 
         async function loadContent() {
             try {
-                const res = await fetch('/api/site-content');
+                const res = await fetch(`${API_URL}/api/site-content`);
                 const data = await res.json();
 
                 document.getElementById('heroTagline').value = data.hero?.tagline || '';
@@ -1808,7 +1809,7 @@
             formData.append('videos', JSON.stringify(videos));
 
             try {
-                const res = await fetch('/api/site-content/upload', {
+                const res = await fetch(`${API_URL}/api/site-content/upload`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -1841,7 +1842,7 @@
 
         async function loadCourses() {
             try {
-                const res = await fetch('/api/courses', {
+                const res = await fetch(`${API_URL}/api/courses`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const courses = await res.json();
@@ -1873,7 +1874,7 @@
 
         async function editCourse(id) {
             try {
-                const res = await fetch(`/api/courses/${id}`, {
+                const res = await fetch(`${API_URL}/api/courses/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const c = await res.json();
@@ -1902,7 +1903,7 @@
             if (!confirm('Delete this course?')) return;
             
             try {
-                await fetch(`/api/courses/${id}`, {
+                await fetch(`${API_URL}/api/courses/${id}`, {
                     method: 'DELETE',
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -1940,7 +1941,7 @@
             }
 
             try {
-                const url = id ? `/api/courses/${id}` : '/api/courses';
+                const url = id ? `${API_URL}/api/courses/${id}` : `${API_URL}/api/courses`;
                 const method = id ? 'PUT' : 'POST';
                 
                 const res = await fetch(url, {
@@ -1997,7 +1998,7 @@
             submitBtn.disabled = true;
 
             try {
-                const res = await fetch('/api/auth/register', {
+                const res = await fetch(`${API_URL}/api/auth/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2030,7 +2031,7 @@
 
         async function loadUsers() {
             try {
-                const res = await fetch('/api/users', {
+                const res = await fetch(`${API_URL}/api/users`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const users = await res.json();
@@ -2058,7 +2059,7 @@
             if (!confirm('Delete this user?')) return;
             
             try {
-                await fetch(`/api/users/${id}`, {
+                await fetch(`${API_URL}/api/users/${id}`, {
                     method: 'DELETE',
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -2072,7 +2073,7 @@
         // ===== TESTIMONIAL FUNCTIONS =====
         async function loadTestimonials() {
             try {
-                const res = await fetch('/api/testimonials/admin', {
+                const res = await fetch(`${API_URL}/api/testimonials/admin`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const testimonials = await res.json();
@@ -2105,7 +2106,7 @@
 
         async function toggleApprove(id, approved) {
             try {
-                await fetch(`/api/testimonials/${id}`, {
+                await fetch(`${API_URL}/api/testimonials/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2122,7 +2123,7 @@
         // ===== REGISTRATION FUNCTIONS =====
         async function loadCoursesForSelect() {
             try {
-                const res = await fetch('/api/courses', {
+                const res = await fetch(`${API_URL}/api/courses`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const courses = await res.json();
@@ -2140,7 +2141,7 @@
             if (!courseId) return;
 
             try {
-                const res = await fetch(`/api/registrations/course/${courseId}`, {
+                const res = await fetch(`${API_URL}/api/registrations/course/${courseId}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const registrations = await res.json();
@@ -2180,7 +2181,7 @@
 
         async function markAttendance(regId, attended) {
             try {
-                await fetch(`/api/registrations/${regId}/attendance`, {
+                await fetch(`${API_URL}/api/registrations/${regId}/attendance`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
