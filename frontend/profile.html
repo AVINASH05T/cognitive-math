@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>My Profile - Cognitive Math</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .profile-header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--white);
+            overflow: hidden;
+            background: var(--white);
+            position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--light-bg);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card h3 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card p {
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        .profile-details {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 2rem;
+            border: 1px solid var(--light-bg);
+        }
+
+        .profile-details h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 0.8rem;
+        }
+
+        .profile-details h2 i {
+            color: var(--primary);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .detail-item {
+            padding: 0.8rem;
+            background: var(--light-bg);
+            border-radius: var(--radius-md);
+            transition: transform 0.3s;
+        }
+
+        .detail-item:hover {
+            transform: translateX(5px);
+            background: var(--primary-light);
+            color: var(--white);
+        }
+
+        .detail-item:hover .detail-label,
+        .detail-item:hover .detail-value {
+            color: var(--white);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .detail-value {
+            color: var(--gray);
+            font-size: 1rem;
+            word-break: break-word;
+        }
+
+        .achievements-section {
+            margin-top: 1.5rem;
+        }
+
+        .achievement-tag {
+            display: inline-block;
+            background: var(--gradient);
+            color: var(--white);
+            padding: 0.4rem 1rem;
+            border-radius: var(--radius-lg);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .edit-btn {
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .edit-form {
+            display: none;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin-top: 2rem;
+            border: 2px solid var(--primary-light);
+        }
+
+        .edit-form.active {
+            display: block;
+            animation: slideUp 0.5s ease;
+        }
+
+        .edit-form h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--light-bg);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(43, 122, 120, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-save {
+            background: var(--success);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-cancel {
+            background: var(--gray);
+            color: var(--white);
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cancel:hover {
+            background: var(--danger);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .completed-courses {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-top: 2rem;
+            border: 1px solid var(--light-bg);
+        }
+
+        .completed-courses h2 {
+            margin-bottom: 1.5rem;
+            color: var(--primary-dark);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 2px solid var(--light-bg);
+            padding-bottom: 0.8rem;
+        }
+
+        .completed-courses h2 i {
+            color: var(--primary);
+        }
+
+        .course-chip {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: var(--white);
+            padding: 0.5rem 1.2rem;
+            border-radius: var(--radius-lg);
+            margin-right: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s;
+        }
+
+        .course-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .course-chip i {
+            margin-right: 0.3rem;
+            color: var(--white);
+        }
+
+        .loading-spinner-small {
+            border: 3px solid var(--light-bg);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        @media (max-width: 768px) {
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Help Icon -->
+    <div class="top-bar">
+        <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Profile%20Help'">
+            <i class="fas fa-question-circle"></i>
+            <a href="mailto:info@cognitivemath.com?subject=Profile%20Help">Help & Support</a>
+        </div>
+        <div class="social-header" id="social-header"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img id="logo-img" src="" alt="Cognitive Math" onerror="this.src='https://via.placeholder.com/45x45?text=CM'">
+                <span>Cognitive Math</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+                <a href="#" id="dashboardLink">Dashboard</a>
+                <a href="profile.html">Profile</a>
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+            <a href="courses.html" onclick="toggleMobileMenu()">Courses</a>
+            <a href="#" id="mobileDashboardLink" onclick="toggleMobileMenu()">Dashboard</a>
+            <a href="profile.html" onclick="toggleMobileMenu()">Profile</a>
+            <a href="#" id="mobileLogoutLink" onclick="handleMobileLogout()">Logout</a>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img id="profile-avatar-img" src="https://img.icons8.com/fluency/96/000000/user-male-circle.png" alt="Avatar">
+            </div>
+            <h1 id="profile-name">Loading...</h1>
+            <p id="profile-email"></p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="profile-stats">
+            <div class="stat-card">
+                <h3 id="stat-points">0</h3>
+                <p>Total Points</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-courses">0</h3>
+                <p>Completed</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-rank">#0</h3>
+                <p>Rank</p>
+            </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="profile-details">
+            <h2><i class="fas fa-user-circle"></i> Profile Information</h2>
+            
+            <div class="details-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Full Name</div>
+                    <div class="detail-value" id="display-name">-</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Email</div>
+                    <div class="detail-value" id="display-email">-</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Grade</div>
+                    <div class="detail-value" id="display-grade">-</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Parent Phone</div>
+                    <div class="detail-value" id="display-phone">-</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Date of Birth</div>
+                    <div class="detail-value" id="display-dob">-</div>
+                </div>
+                
+                <div class="detail-item">
+                    <div class="detail-label">Member Since</div>
+                    <div class="detail-value" id="display-joined">-</div>
+                </div>
+            </div>
+            
+            <div class="achievements-section">
+                <div class="detail-label mb-2">Achievements</div>
+                <div id="display-achievements">
+                    <span class="achievement-tag">No achievements yet</span>
+                </div>
+            </div>
+
+            <button class="edit-btn" onclick="showEditForm()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+
+        <!-- Edit Form with Image Upload -->
+        <div class="edit-form" id="editForm">
+            <h2><i class="fas fa-pen"></i> Edit Profile</h2>
+            
+            <!-- Profile Image Upload Section -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="position: relative; display: inline-block;">
+                    <img id="edit-avatar-preview" src="https://img.icons8.com/fluency/96/000000/user-male-circle.png" alt="Profile" 
+                         style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid var(--primary);">
+                    <label for="profileImageUpload" style="position: absolute; bottom: 0; right: 0; background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid white;">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="profileImageUpload" accept="image/*" style="display: none;">
+                </div>
+                <p style="margin-top: 0.5rem; color: var(--gray); font-size: 0.85rem;">Click camera icon to upload photo (Max: 5MB)</p>
+                <div id="uploadProgress" style="display: none; margin-top: 0.5rem;">
+                    <div class="loading-spinner-small"></div>
+                    <span>Uploading...</span>
+                </div>
+            </div>
+            
+            <form id="profileForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="edit-name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Grade</label>
+                    <input type="text" id="edit-grade" placeholder="e.g., 10, 12">
+                </div>
+                
+                <div class="form-group">
+                    <label>Parent Phone</label>
+                    <input type="text" id="edit-phone" placeholder="10-digit mobile number">
+                </div>
+                
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="edit-dob">
+                </div>
+                
+                <div class="form-group">
+                    <label>Achievements (comma separated)</label>
+                    <input type="text" id="edit-achievements" placeholder="e.g., Top Scorer, Perfect Attendance">
+                </div>
+                
+                <div class="btn-group">
+                    <button type="submit" class="btn-save"><i class="fas fa-save"></i> Save Changes</button>
+                    <button type="button" class="btn-cancel" onclick="hideEditForm()"><i class="fas fa-times"></i> Cancel</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Completed Courses Section -->
+        <div class="completed-courses">
+            <h2><i class="fas fa-graduation-cap"></i> Completed Courses</h2>
+            <div id="completed-courses-container">
+                <div class="loading-spinner-small"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        function handleMobileLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Get user from localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        // Set dashboard link based on role
+        const dashboardLink = document.getElementById('dashboardLink');
+        const mobileDashboardLink = document.getElementById('mobileDashboardLink');
+        
+        if (user.role === 'admin' || user.role === 'editor') {
+            dashboardLink.href = 'dashboard/admin.html';
+            mobileDashboardLink.href = 'dashboard/admin.html';
+        } else {
+            dashboardLink.href = 'dashboard/student.html';
+            mobileDashboardLink.href = 'dashboard/student.html';
+        }
+
+        // Load site content (logo and social links)
+        async function loadSiteContent() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+                
+                // Logo
+                if (data.logo) {
+                    document.getElementById('logo-img').src = data.logo;
+                }
+
+                // Social Links (Header)
+                const socialHeader = document.getElementById('social-header');
+                if (data.socialLinks) {
+                    let socialHtml = '';
+                    const platforms = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin'];
+                    platforms.forEach(platform => {
+                        if (data.socialLinks[platform] && data.socialLinks[platform].visible) {
+                            let icon = '';
+                            switch(platform) {
+                                case 'facebook': icon = 'fab fa-facebook-f'; break;
+                                case 'twitter': icon = 'fab fa-twitter'; break;
+                                case 'instagram': icon = 'fab fa-instagram'; break;
+                                case 'youtube': icon = 'fab fa-youtube'; break;
+                                case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+                            }
+                            socialHtml += `<a href="${data.socialLinks[platform].url}" target="_blank"><i class="${icon}"></i></a>`;
+                        }
+                    });
+                    if (socialHtml) {
+                        socialHeader.innerHTML = socialHtml;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading site content:', err);
+            }
+        }
+
+        // Profile image upload functionality
+        document.getElementById('profileImageUpload').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file size (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File too large! Maximum size is 5MB.');
+                this.value = '';
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file');
+                this.value = '';
+                return;
+            }
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('edit-avatar-preview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            // Upload file
+            const formData = new FormData();
+            formData.append('profileImage', file);
+
+            const progressDiv = document.getElementById('uploadProgress');
+            progressDiv.style.display = 'block';
+
+            try {
+                const res = await fetch('/api/upload/profile-image', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert('✅ Profile image uploaded successfully!');
+                    // Update main avatar
+                    document.getElementById('profile-avatar-img').src = data.profileImage;
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Upload failed'));
+                }
+            } catch (err) {
+                console.error('Error uploading:', err);
+                alert('Error uploading image');
+            } finally {
+                progressDiv.style.display = 'none';
+            }
+        });
+
+        // Load user profile
+        async function loadProfile() {
+            try {
+                const res = await fetch('/api/users/profile', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const userData = await res.json();
+
+                // Update profile header
+                document.getElementById('profile-name').textContent = userData.name;
+                document.getElementById('profile-email').textContent = userData.email;
+                
+                // Update avatar
+                if (userData.profileImage) {
+                    document.getElementById('profile-avatar-img').src = userData.profileImage;
+                    document.getElementById('edit-avatar-preview').src = userData.profileImage;
+                }
+                
+                // Update details grid
+                document.getElementById('display-name').textContent = userData.name;
+                document.getElementById('display-email').textContent = userData.email;
+                document.getElementById('display-grade').textContent = userData.standard || 'Not set';
+                document.getElementById('display-phone').textContent = userData.parentPhone || 'Not set';
+                document.getElementById('display-dob').textContent = userData.dob ? new Date(userData.dob).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                }) : 'Not set';
+                document.getElementById('display-joined').textContent = new Date(userData.createdAt).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+                
+                // Update stats
+                document.getElementById('stat-points').textContent = userData.points || 0;
+                document.getElementById('stat-courses').textContent = userData.completedCourses?.length || 0;
+
+                // Update achievements
+                if (userData.achievements && userData.achievements.length) {
+                    document.getElementById('display-achievements').innerHTML = userData.achievements.map(a => 
+                        `<span class="achievement-tag">${a}</span>`
+                    ).join('');
+                }
+
+                // Fill edit form
+                document.getElementById('edit-name').value = userData.name || '';
+                document.getElementById('edit-grade').value = userData.standard || '';
+                document.getElementById('edit-phone').value = userData.parentPhone || '';
+                document.getElementById('edit-dob').value = userData.dob ? userData.dob.split('T')[0] : '';
+                document.getElementById('edit-achievements').value = userData.achievements ? userData.achievements.join(', ') : '';
+
+                // Load leaderboard rank
+                await loadLeaderboardRank(userData.points || 0);
+                
+                // Load completed courses
+                await loadCompletedCourses(userData.completedCourses || []);
+            } catch (err) {
+                console.error('Error loading profile:', err);
+            }
+        }
+
+        // Load leaderboard rank
+        async function loadLeaderboardRank(userPoints) {
+            try {
+                const res = await fetch('/api/users/leaderboard', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const users = await res.json();
+                const rank = users.findIndex(u => u.points === userPoints) + 1;
+                document.getElementById('stat-rank').textContent = `#${rank || 'N/A'}`;
+            } catch (err) {
+                console.error('Error loading leaderboard:', err);
+            }
+        }
+
+        // Load completed courses
+        async function loadCompletedCourses(courseIds) {
+            if (!courseIds || courseIds.length === 0) {
+                document.getElementById('completed-courses-container').innerHTML = 
+                    '<p style="color: var(--gray); text-align: center; padding: 2rem;">No completed courses yet. Keep learning!</p>';
+                return;
+            }
+
+            try {
+                const courses = await Promise.all(
+                    courseIds.map(async (id) => {
+                        const res = await fetch(`/api/courses/${id}`);
+                        return res.json();
+                    })
+                );
+
+                const container = document.getElementById('completed-courses-container');
+                container.innerHTML = courses.map(course => `
+                    <span class="course-chip">
+                        <i class="fas fa-check-circle"></i>
+                        ${course.title} (Grade ${course.grade})
+                    </span>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading completed courses:', err);
+            }
+        }
+
+        // Show/hide edit form
+        function showEditForm() {
+            document.getElementById('editForm').classList.add('active');
+            window.scrollTo({ top: document.getElementById('editForm').offsetTop, behavior: 'smooth' });
+        }
+
+        function hideEditForm() {
+            document.getElementById('editForm').classList.remove('active');
+        }
+
+        // Update profile
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const achievements = document.getElementById('edit-achievements').value
+                .split(',').map(a => a.trim()).filter(a => a);
+
+            const userData = {
+                name: document.getElementById('edit-name').value,
+                standard: document.getElementById('edit-grade').value,
+                parentPhone: document.getElementById('edit-phone').value,
+                dob: document.getElementById('edit-dob').value,
+                achievements
+            };
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/users/profile', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (res.ok) {
+                    alert('✅ Profile updated successfully!');
+                    hideEditForm();
+                    loadProfile();
+                } else {
+                    const data = await res.json();
+                    alert('❌ ' + (data.message || 'Failed to update profile'));
+                }
+            } catch (err) {
+                alert('❌ Error updating profile');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('mobileLogoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        loadSiteContent();
+        loadProfile();
+    </script>
+</body>
+</html>

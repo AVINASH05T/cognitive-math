@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Courses - Cognitive Math</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .courses-header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        .courses-header h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .courses-header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .filter-section {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            margin: 2rem auto;
+            max-width: 1400px;
+            width: calc(100% - 2rem);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid var(--light-bg);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            color: var(--primary-dark);
+            background: var(--white);
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232B7A78' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 35px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.3rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 1;
+        }
+
+        .course-badge.free {
+            background: var(--success, #10b981);
+        }
+
+        .course-image-container {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .course-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .course-card:hover .course-image {
+            transform: scale(1.05);
+        }
+
+        .course-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .course-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .course-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .course-description {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--light-bg);
+            padding-top: 1rem;
+            margin-top: auto;
+        }
+
+        .course-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .course-price.free {
+            color: var(--success, #10b981);
+        }
+
+        .btn-enroll {
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-enroll:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 3rem auto;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--light-bg);
+            background: var(--white);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .page-btn:hover {
+            background: var(--primary-light);
+            color: var(--white);
+        }
+
+        .page-btn.active {
+            background: var(--gradient);
+            color: var(--white);
+            border-color: transparent;
+        }
+
+        .no-courses {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            grid-column: 1 / -1;
+        }
+
+        .no-courses i {
+            font-size: 4rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .no-courses h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .no-courses p {
+            color: var(--gray);
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            padding: 0 1rem;
+        }
+
+        .filter-tag {
+            background: var(--light-bg);
+            color: var(--primary-dark);
+            padding: 0.3rem 1rem;
+            border-radius: var(--radius-lg);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-tag i {
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .filter-tag i:hover {
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .course-image-container {
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Help Icon -->
+    <div class="top-bar">
+        <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Course%20Help'">
+            <i class="fas fa-question-circle"></i>
+            <a href="mailto:info@cognitivemath.com?subject=Course%20Help">Help & Queries</a>
+        </div>
+        <div class="social-header" id="social-header"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img id="logo-img" src="" alt="Cognitive Math" onerror="this.src='https://via.placeholder.com/45x45?text=CM'">
+                <span>Cognitive Math</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+                <a href="#" id="dashboardLink" style="display:none;">Dashboard</a>
+                <a href="#" id="profileLink" style="display:none;">Profile</a>
+                <a href="login.html" id="loginLink" class="btn-login">Login</a>
+                <a href="#" id="logoutLink" style="display:none;">Logout</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+            <a href="courses.html" onclick="toggleMobileMenu()">Courses</a>
+            <a href="#" id="mobileDashboardLink" style="display:none;" onclick="toggleMobileMenu()">Dashboard</a>
+            <a href="#" id="mobileProfileLink" style="display:none;" onclick="toggleMobileMenu()">Profile</a>
+            <a href="login.html" id="mobileLoginLink" onclick="toggleMobileMenu()">Login</a>
+            <a href="register.html" id="mobileRegisterLink" onclick="toggleMobileMenu()">Register</a>
+            <a href="#" id="mobileLogoutLink" style="display:none;" onclick="handleMobileLogout()">Logout</a>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <section class="courses-header">
+        <h1>Explore Our Courses</h1>
+        <p>Discover the perfect math course for your learning journey</p>
+    </section>
+
+    <!-- Filters -->
+    <section class="filter-section">
+        <div class="filter-grid">
+            <select id="gradeFilter" class="filter-select">
+                <option value="">All Grades</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+                <option value="10">Grade 10</option>
+                <option value="11">Grade 11</option>
+                <option value="12">Grade 12</option>
+            </select>
+
+            <select id="boardFilter" class="filter-select">
+                <option value="">All Boards</option>
+                <option value="CBSE">CBSE</option>
+                <option value="ICSE">ICSE</option>
+                <option value="Matric">Matric</option>
+                <option value="All">All Boards</option>
+            </select>
+
+            <select id="priceFilter" class="filter-select">
+                <option value="">All Prices</option>
+                <option value="free">Free Courses</option>
+                <option value="paid">Paid Courses</option>
+            </select>
+
+            <select id="sortFilter" class="filter-select">
+                <option value="title">Sort by: Name</option>
+                <option value="grade">Sort by: Grade</option>
+                <option value="priceLow">Price: Low to High</option>
+                <option value="priceHigh">Price: High to Low</option>
+            </select>
+        </div>
+
+        <!-- Active Filters Display -->
+        <div class="active-filters" id="activeFilters"></div>
+    </section>
+
+    <!-- Courses Grid -->
+    <section class="courses-section">
+        <div class="courses-grid" id="courses-container">
+            <div class="loading-spinner"></div>
+        </div>
+        
+        <!-- Pagination -->
+        <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Cognitive Math</h3>
+                <p>Making mathematics accessible and enjoyable through cognitive learning techniques.</p>
+                <div class="social-links" id="social-links"></div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+                <a href="login.html">Login</a>
+                <a href="register.html">Register</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p><i class="fas fa-phone"></i> <span id="contact-phone">+91 98765 43210</span></p>
+                <p><i class="fas fa-envelope"></i> <span id="contact-email">info@cognitivemath.com</span></p>
+                <p><i class="fas fa-map-marker-alt"></i> Chennai, India</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Cognitive Math Online Class. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Check login status
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        // State management
+        let allCourses = [];
+        let filteredCourses = [];
+        let currentPage = 1;
+        const coursesPerPage = 9;
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        function handleMobileLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Update navigation
+        function updateNavigation() {
+            const loginLink = document.getElementById('loginLink');
+            const logoutLink = document.getElementById('logoutLink');
+            const dashboardLink = document.getElementById('dashboardLink');
+            const profileLink = document.getElementById('profileLink');
+            
+            // Mobile links
+            const mobileLoginLink = document.getElementById('mobileLoginLink');
+            const mobileRegisterLink = document.getElementById('mobileRegisterLink');
+            const mobileLogoutLink = document.getElementById('mobileLogoutLink');
+            const mobileDashboardLink = document.getElementById('mobileDashboardLink');
+            const mobileProfileLink = document.getElementById('mobileProfileLink');
+
+            if (token && user) {
+                // Desktop
+                if (loginLink) loginLink.style.display = 'none';
+                if (logoutLink) {
+                    logoutLink.style.display = 'inline-block';
+                    logoutLink.onclick = (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        window.location.href = 'index.html';
+                    };
+                }
+                if (dashboardLink) {
+                    dashboardLink.style.display = 'inline-block';
+                    dashboardLink.href = user.role === 'admin' || user.role === 'editor' ? 'dashboard/admin.html' : 'dashboard/student.html';
+                }
+                if (profileLink) {
+                    profileLink.style.display = 'inline-block';
+                    profileLink.href = 'profile.html';
+                }
+
+                // Mobile
+                if (mobileLoginLink) mobileLoginLink.style.display = 'none';
+                if (mobileRegisterLink) mobileRegisterLink.style.display = 'none';
+                if (mobileLogoutLink) {
+                    mobileLogoutLink.style.display = 'block';
+                    mobileLogoutLink.onclick = (e) => {
+                        e.preventDefault();
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        window.location.href = 'index.html';
+                    };
+                }
+                if (mobileDashboardLink) {
+                    mobileDashboardLink.style.display = 'block';
+                    mobileDashboardLink.href = user.role === 'admin' || user.role === 'editor' ? 'dashboard/admin.html' : 'dashboard/student.html';
+                }
+                if (mobileProfileLink) {
+                    mobileProfileLink.style.display = 'block';
+                    mobileProfileLink.href = 'profile.html';
+                }
+            } else {
+                // Desktop
+                if (loginLink) loginLink.style.display = 'inline-block';
+                if (logoutLink) logoutLink.style.display = 'none';
+                if (dashboardLink) dashboardLink.style.display = 'none';
+                if (profileLink) profileLink.style.display = 'none';
+
+                // Mobile
+                if (mobileLoginLink) mobileLoginLink.style.display = 'block';
+                if (mobileRegisterLink) mobileRegisterLink.style.display = 'block';
+                if (mobileLogoutLink) mobileLogoutLink.style.display = 'none';
+                if (mobileDashboardLink) mobileDashboardLink.style.display = 'none';
+                if (mobileProfileLink) mobileProfileLink.style.display = 'none';
+            }
+        }
+
+        // Load site content (logo, social links, contact)
+        async function loadSiteContent() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+
+                // Logo
+                if (data.logo) {
+                    document.getElementById('logo-img').src = data.logo;
+                }
+
+                // Social Links (Header)
+                const socialHeader = document.getElementById('social-header');
+                if (data.socialLinks) {
+                    let socialHtml = '';
+                    const platforms = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin'];
+                    platforms.forEach(platform => {
+                        if (data.socialLinks[platform] && data.socialLinks[platform].visible) {
+                            let icon = '';
+                            switch(platform) {
+                                case 'facebook': icon = 'fab fa-facebook-f'; break;
+                                case 'twitter': icon = 'fab fa-twitter'; break;
+                                case 'instagram': icon = 'fab fa-instagram'; break;
+                                case 'youtube': icon = 'fab fa-youtube'; break;
+                                case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+                            }
+                            socialHtml += `<a href="${data.socialLinks[platform].url}" target="_blank"><i class="${icon}"></i></a>`;
+                        }
+                    });
+                    if (socialHtml) {
+                        socialHeader.innerHTML = socialHtml;
+                    }
+                }
+
+                // Social Links (Footer)
+                const socialFooter = document.getElementById('social-links');
+                if (data.socialLinks) {
+                    let socialHtml = '';
+                    const platforms = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin'];
+                    platforms.forEach(platform => {
+                        if (data.socialLinks[platform] && data.socialLinks[platform].visible) {
+                            let icon = '';
+                            switch(platform) {
+                                case 'facebook': icon = 'fab fa-facebook-f'; break;
+                                case 'twitter': icon = 'fab fa-twitter'; break;
+                                case 'instagram': icon = 'fab fa-instagram'; break;
+                                case 'youtube': icon = 'fab fa-youtube'; break;
+                                case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+                            }
+                            socialHtml += `<a href="${data.socialLinks[platform].url}" target="_blank"><i class="${icon}"></i></a>`;
+                        }
+                    });
+                    if (socialHtml) {
+                        socialFooter.innerHTML = socialHtml;
+                    }
+                }
+
+                // Contact
+                if (data.contact) {
+                    if (data.contact.phone) document.getElementById('contact-phone').textContent = data.contact.phone;
+                    if (data.contact.email) document.getElementById('contact-email').textContent = data.contact.email;
+                }
+            } catch (err) {
+                console.error('Error loading site content:', err);
+            }
+        }
+
+        // Load all courses
+        async function loadCourses() {
+            try {
+                const res = await fetch('/api/courses');
+                allCourses = await res.json();
+                filteredCourses = [...allCourses];
+                applyFilters();
+            } catch (err) {
+                console.error('Error loading courses:', err);
+                document.getElementById('courses-container').innerHTML = `
+                    <div class="no-courses">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Courses</h3>
+                        <p>Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Update active filters display
+        function updateActiveFilters() {
+            const grade = document.getElementById('gradeFilter').value;
+            const board = document.getElementById('boardFilter').value;
+            const price = document.getElementById('priceFilter').value;
+            
+            let filtersHtml = '';
+            
+            if (grade) filtersHtml += `<span class="filter-tag">Grade ${grade} <i class="fas fa-times" onclick="clearFilter('grade')"></i></span>`;
+            if (board) filtersHtml += `<span class="filter-tag">${board} <i class="fas fa-times" onclick="clearFilter('board')"></i></span>`;
+            if (price) filtersHtml += `<span class="filter-tag">${price === 'free' ? 'Free' : 'Paid'} <i class="fas fa-times" onclick="clearFilter('price')"></i></span>`;
+            
+            document.getElementById('activeFilters').innerHTML = filtersHtml;
+        }
+
+        // Clear individual filter
+        function clearFilter(filter) {
+            if (filter === 'grade') document.getElementById('gradeFilter').value = '';
+            if (filter === 'board') document.getElementById('boardFilter').value = '';
+            if (filter === 'price') document.getElementById('priceFilter').value = '';
+            applyFilters();
+        }
+
+        // Apply filters and sorting
+        function applyFilters() {
+            const grade = document.getElementById('gradeFilter').value;
+            const board = document.getElementById('boardFilter').value;
+            const price = document.getElementById('priceFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+
+            filteredCourses = allCourses.filter(course => {
+                if (grade && course.grade !== grade) return false;
+                if (board && course.board !== board) return false;
+                if (price === 'free' && course.price > 0) return false;
+                if (price === 'paid' && course.price === 0) return false;
+                return true;
+            });
+
+            // Sort courses
+            switch(sort) {
+                case 'title':
+                    filteredCourses.sort((a, b) => a.title.localeCompare(b.title));
+                    break;
+                case 'grade':
+                    filteredCourses.sort((a, b) => parseInt(a.grade) - parseInt(b.grade));
+                    break;
+                case 'priceLow':
+                    filteredCourses.sort((a, b) => a.price - b.price);
+                    break;
+                case 'priceHigh':
+                    filteredCourses.sort((a, b) => b.price - a.price);
+                    break;
+            }
+
+            currentPage = 1;
+            updateActiveFilters();
+            displayCourses();
+        }
+
+        // Display courses for current page
+        function displayCourses() {
+            const container = document.getElementById('courses-container');
+            
+            if (filteredCourses.length === 0) {
+                container.innerHTML = `
+                    <div class="no-courses">
+                        <i class="fas fa-search"></i>
+                        <h3>No Courses Found</h3>
+                        <p>Try adjusting your filters to find more courses.</p>
+                    </div>
+                `;
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            // Pagination
+            const start = (currentPage - 1) * coursesPerPage;
+            const end = start + coursesPerPage;
+            const paginatedCourses = filteredCourses.slice(start, end);
+
+            container.innerHTML = paginatedCourses.map(course => {
+                const imageUrl = course.image 
+                    ? course.image.startsWith('http') 
+                        ? course.image 
+                        : `${window.location.origin}${course.image}`
+                    : 'https://img.icons8.com/fluency/96/000000/math.png';
+                
+                return `
+                    <div class="course-card">
+                        <div class="course-badge ${course.price === 0 ? 'free' : ''}">
+                            ${course.price === 0 ? 'FREE' : 'PAID'}
+                        </div>
+                        <div class="course-image-container">
+                            <img src="${imageUrl}" 
+                                 class="course-image" 
+                                 alt="${course.title}"
+                                 onerror="this.src='https://img.icons8.com/fluency/96/000000/math.png'; this.onerror=null;">
+                        </div>
+                        <div class="course-content">
+                            <h3 class="course-title">${course.title}</h3>
+                            <div class="course-meta">
+                                <span><i class="fas fa-layer-group"></i> Grade ${course.grade}</span>
+                                <span><i class="fas fa-clock"></i> ${course.timing || 'Flexible'}</span>
+                                <span><i class="fas fa-book"></i> ${course.board}</span>
+                            </div>
+                            <p class="course-description">${course.description || 'Comprehensive mathematics course designed to build strong foundations and problem-solving skills.'}</p>
+                            <div class="course-footer">
+                                <span class="course-price ${course.price === 0 ? 'free' : ''}">
+                                    ${course.price === 0 ? 'FREE' : '₹' + course.price}
+                                </span>
+                                <button onclick="enrollCourse('${course._id}', ${course.price})" class="btn-enroll">
+                                    ${course.price === 0 ? 'Enroll Now' : 'Buy Now'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            updatePagination();
+        }
+
+        // Update pagination buttons
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let buttons = '';
+            for (let i = 1; i <= totalPages; i++) {
+                buttons += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+            }
+            
+            pagination.innerHTML = buttons;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            currentPage = page;
+            displayCourses();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Enroll in course
+        async function enrollCourse(courseId, price) {
+            if (!token) {
+                alert('Please login first to enroll in courses');
+                window.location.href = 'login.html';
+                return;
+            }
+
+            if (price > 0) {
+                // Redirect to checkout for paid courses
+                window.location.href = `checkout.html?courseId=${courseId}`;
+            } else {
+                // Free course enrollment
+                try {
+                    const res = await fetch('/api/registrations', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ courseId, amount: 0 })
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        alert('✅ Successfully enrolled!');
+                        window.location.href = 'dashboard/student.html';
+                    } else {
+                        alert(data.message || 'Enrollment failed');
+                    }
+                } catch (err) {
+                    alert('Error enrolling in course');
+                }
+            }
+        }
+
+        // Event listeners for filters
+        document.getElementById('gradeFilter').addEventListener('change', applyFilters);
+        document.getElementById('boardFilter').addEventListener('change', applyFilters);
+        document.getElementById('priceFilter').addEventListener('change', applyFilters);
+        document.getElementById('sortFilter').addEventListener('change', applyFilters);
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        updateNavigation();
+        loadSiteContent();
+        loadCourses();
+    </script>
+</body>
+</html>

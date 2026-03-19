@@ -1,0 +1,2245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Admin Dashboard - Cognitive Math</title>
+    <!-- Correct path to CSS file -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Admin-specific styles */
+        .admin-container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .admin-header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .admin-header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .admin-header-left p {
+            opacity: 0.9;
+        }
+
+        .admin-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .admin-stats-mini {
+            background: rgba(255,255,255,0.2);
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .header-profile-link {
+            text-decoration: none;
+        }
+
+        .header-profile-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            transition: transform 0.3s;
+        }
+
+        .header-profile-img:hover {
+            transform: scale(1.1);
+        }
+
+        .admin-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .tab-btn {
+            padding: 0.7rem 1.5rem;
+            background: var(--white);
+            border: 1px solid var(--light-bg);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--primary-dark);
+            transition: all 0.3s;
+            white-space: nowrap;
+            font-size: 0.95rem;
+            min-height: 44px;
+        }
+
+        .tab-btn:hover {
+            background: var(--light-bg);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient);
+            color: var(--white);
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card h3 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card p {
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        .section-title {
+            margin: 2rem 0 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-bg);
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .data-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 1rem 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--light-bg);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+            font-size: 0.95rem;
+        }
+
+        .data-table th {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 1rem;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--light-bg);
+        }
+
+        .data-table tr:hover {
+            background: var(--light-bg);
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin: 0 0.2rem;
+            min-height: 36px;
+            min-width: 60px;
+            transition: all 0.3s;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-edit {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-delete {
+            background: #dc3545;
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: var(--white);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: var(--primary-dark);
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: var(--white);
+        }
+
+        .btn-announce {
+            background: #8B5CF6;
+            color: var(--white);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--light-bg);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(43, 122, 120, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .dynamic-field {
+            background: var(--light-bg);
+            padding: 1.2rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .dynamic-field input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid var(--light-bg);
+            border-radius: var(--radius-sm);
+            margin-bottom: 0.5rem;
+        }
+
+        .image-preview {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            margin: 0.5rem 0;
+            border: 2px solid var(--primary);
+        }
+
+        .remove-btn {
+            background: #dc3545;
+            color: var(--white);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .upload-note {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-top: 0.25rem;
+        }
+
+        .social-toggle {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .social-toggle label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .social-toggle input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+        .announcement-section {
+            background: var(--light-bg);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+        }
+
+        .announcement-section h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .recipient-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .message-preview {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            margin: 1rem 0;
+            border-left: 4px solid var(--primary);
+            font-style: italic;
+        }
+
+        .admin-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--light-bg);
+        }
+
+        .admin-card h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-info {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        /* Announcement Modal */
+        .announcement-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .announcement-modal.active {
+            display: flex;
+        }
+
+        .announcement-content {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .announcement-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+
+        .announcement-close:hover {
+            background: var(--light-bg);
+            color: var(--primary-dark);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .admin-header-left {
+                justify-content: center;
+            }
+            
+            .admin-header-right {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .admin-tabs {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                padding-bottom: 10px;
+            }
+            
+            .tab-btn {
+                flex: 0 0 auto;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 1rem;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.5rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .admin-header {
+                padding: 1.5rem;
+            }
+            
+            .admin-header-left h1 {
+                font-size: 1.5rem;
+            }
+            
+            .tab-content {
+                padding: 1rem;
+            }
+            
+            .btn-action {
+                margin: 0.1rem;
+                padding: 0.3rem 0.6rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Help Icon -->
+    <div class="top-bar">
+        <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Admin%20Help'">
+            <i class="fas fa-question-circle"></i>
+            <a href="mailto:info@cognitivemath.com?subject=Admin%20Help">Admin Support</a>
+        </div>
+        <div class="social-header" id="social-header"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <img id="logo-img" src="" alt="Cognitive Math" onerror="this.src='https://via.placeholder.com/45x45?text=CM'">
+                <span>Cognitive Math</span>
+            </a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../courses.html">Courses</a>
+                <a href="admin.html">Dashboard</a>
+                <a href="../profile.html">Profile</a>
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="../index.html" onclick="toggleMobileMenu()">Home</a>
+            <a href="../courses.html" onclick="toggleMobileMenu()">Courses</a>
+            <a href="admin.html" onclick="toggleMobileMenu()">Dashboard</a>
+            <a href="../profile.html" onclick="toggleMobileMenu()">Profile</a>
+            <a href="#" id="mobileLogoutLink" onclick="handleMobileLogout()">Logout</a>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="admin-header-left">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p>Welcome back, <span id="admin-name">Admin</span></p>
+                </div>
+            </div>
+            <div class="admin-header-right">
+                <div class="admin-stats-mini">
+                    <span><i class="fas fa-users"></i> <span id="total-users">0</span> Users</span>
+                    <span><i class="fas fa-book"></i> <span id="total-courses-mini">0</span> Courses</span>
+                    <span><i class="fas fa-star"></i> <span id="total-testimonials-mini">0</span> Testimonials</span>
+                </div>
+                <a href="../profile.html" class="header-profile-link">
+                    <img id="header-profile-img" src="https://img.icons8.com/fluency/96/000000/user-male-circle.png" 
+                         class="header-profile-img" alt="Profile">
+                </a>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showTab('overview')"><i class="fas fa-chart-pie"></i> Overview</button>
+            <button class="tab-btn" onclick="showTab('content')"><i class="fas fa-edit"></i> Content</button>
+            <button class="tab-btn" onclick="showTab('about')"><i class="fas fa-info-circle"></i> About</button>
+            <button class="tab-btn" onclick="showTab('social')"><i class="fas fa-share-alt"></i> Social</button>
+            <button class="tab-btn" onclick="showTab('courses')"><i class="fas fa-book"></i> Courses</button>
+            <button class="tab-btn" onclick="showTab('users')"><i class="fas fa-users"></i> Users</button>
+            <button class="tab-btn" onclick="showTab('testimonials')"><i class="fas fa-comment"></i> Testimonials</button>
+            <button class="tab-btn" onclick="showTab('announcements')"><i class="fas fa-bullhorn"></i> Announce</button>
+            <button class="tab-btn" onclick="showTab('registrations')"><i class="fas fa-clipboard-list"></i> Registrations</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="section-title">
+                <i class="fas fa-chart-pie"></i> Dashboard Overview
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="overview-students">0</h3>
+                    <p>Students</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="overview-courses">0</h3>
+                    <p>Courses</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="overview-enrollments">0</h3>
+                    <p>Enrollments</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="overview-testimonials">0</h3>
+                    <p>Testimonials</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Editor Tab -->
+        <div id="content" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-edit"></i> Content Editor
+            </div>
+            <form id="contentForm" enctype="multipart/form-data">
+                <!-- Logo -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-image"></i> Site Logo</h3>
+                    <div class="form-group">
+                        <label>Upload Logo</label>
+                        <input type="file" id="logoFile" accept="image/*">
+                        <div class="upload-note">Recommended size: 200x200px. Max size: 10MB</div>
+                        <div id="logoPreviewContainer">
+                            <img id="logoPreview" src="" class="image-preview" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Section -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-home"></i> Hero Section</h3>
+                    <div class="form-group">
+                        <label>Hero Tagline</label>
+                        <input type="text" id="heroTagline" placeholder="Enter hero tagline">
+                    </div>
+                    <div class="form-group">
+                        <label>Hero Background Image</label>
+                        <input type="file" id="heroImage" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-chart-bar"></i> Statistics</h3>
+                    <div id="statsContainer"></div>
+                    <button type="button" class="btn-success" onclick="addStatField()">➕ Add Stat</button>
+                </div>
+
+                <!-- Teachers -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-chalkboard-teacher"></i> Teachers</h3>
+                    <div id="teachersContainer"></div>
+                    <button type="button" class="btn-success" onclick="addTeacherField()">➕ Add Teacher</button>
+                </div>
+
+                <!-- YouTube Videos -->
+                <div class="admin-card">
+                    <h3><i class="fab fa-youtube"></i> YouTube Videos</h3>
+                    <div id="videosContainer"></div>
+                    <button type="button" class="btn-success" onclick="addVideoField()">➕ Add Video</button>
+                </div>
+
+                <!-- Contact -->
+                <div class="admin-card">
+                    <h3><i class="fas fa-address-card"></i> Contact Information</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="text" id="contactPhone" placeholder="+91 98765 43210">
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="contactEmail" placeholder="info@cognitivemath.com">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-success" style="padding: 1rem 2rem; font-size: 1.1rem;">
+                    <i class="fas fa-save"></i> Save All Changes
+                </button>
+            </form>
+        </div>
+
+        <!-- About Section Editor Tab -->
+        <div id="about" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-info-circle"></i> About Us Editor
+            </div>
+            <p style="margin-bottom: 1rem; color: var(--gray);">Add, edit or remove About Us sections that appear on the homepage.</p>
+            
+            <div id="aboutSectionsContainer"></div>
+            
+            <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+                <button type="button" class="btn-success" onclick="addAboutSection()">
+                    <i class="fas fa-plus"></i> Add About Section
+                </button>
+                <button type="button" class="btn-warning" onclick="saveAboutSections()" id="saveAboutBtn">
+                    <i class="fas fa-save"></i> Save About Sections
+                </button>
+            </div>
+            
+            <div id="aboutMessage" style="margin-top: 1rem; display: none;"></div>
+        </div>
+
+        <!-- Social Links Editor Tab -->
+        <div id="social" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-share-alt"></i> Social Media Links
+            </div>
+            <form id="socialForm">
+                <div class="admin-card">
+                    <h3><i class="fab fa-facebook"></i> Facebook</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Facebook URL</label>
+                            <input type="url" id="facebookUrl" placeholder="https://facebook.com/yourpage">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Visibility</label>
+                            <div class="social-toggle">
+                                <label>
+                                    <input type="checkbox" id="facebookVisible"> Show on website
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3><i class="fab fa-twitter"></i> Twitter (X)</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Twitter URL</label>
+                            <input type="url" id="twitterUrl" placeholder="https://twitter.com/yourhandle">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Visibility</label>
+                            <div class="social-toggle">
+                                <label>
+                                    <input type="checkbox" id="twitterVisible"> Show on website
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3><i class="fab fa-instagram"></i> Instagram</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Instagram URL</label>
+                            <input type="url" id="instagramUrl" placeholder="https://instagram.com/yourprofile">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Visibility</label>
+                            <div class="social-toggle">
+                                <label>
+                                    <input type="checkbox" id="instagramVisible"> Show on website
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3><i class="fab fa-youtube"></i> YouTube</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>YouTube URL</label>
+                            <input type="url" id="youtubeUrl" placeholder="https://youtube.com/@yourchannel">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Visibility</label>
+                            <div class="social-toggle">
+                                <label>
+                                    <input type="checkbox" id="youtubeVisible"> Show on website
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <h3><i class="fab fa-linkedin"></i> LinkedIn</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>LinkedIn URL</label>
+                            <input type="url" id="linkedinUrl" placeholder="https://linkedin.com/company/yourpage">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Visibility</label>
+                            <div class="social-toggle">
+                                <label>
+                                    <input type="checkbox" id="linkedinVisible"> Show on website
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-success" style="padding: 1rem 2rem;">
+                    <i class="fas fa-save"></i> Save Social Links
+                </button>
+            </form>
+        </div>
+
+        <!-- Announcements Tab -->
+        <div id="announcements" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-bullhorn"></i> Send Announcements
+            </div>
+            
+            <div class="announcement-section">
+                <h3><i class="fas fa-globe"></i> Send to All Users</h3>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="globalMessage" rows="4" placeholder="Type your announcement here..."></textarea>
+                </div>
+                <button class="btn-whatsapp" onclick="sendGlobalAnnouncement()">
+                    <i class="fab fa-whatsapp"></i> Send to All Users
+                </button>
+            </div>
+
+            <div class="announcement-section">
+                <h3><i class="fas fa-users"></i> Send to Specific Course</h3>
+                <div class="form-group">
+                    <label>Select Course</label>
+                    <select id="announceCourseSelect">
+                        <option value="">Loading courses...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea id="courseMessage" rows="4" placeholder="Type your message here... Use {link} for Zoom link"></textarea>
+                </div>
+                <div class="message-preview" id="messagePreview">
+                    Preview will appear here. Use {link} to insert Zoom link.
+                </div>
+                <button class="btn-whatsapp" onclick="sendCourseAnnouncement()">
+                    <i class="fab fa-whatsapp"></i> Send to Course Students
+                </button>
+            </div>
+        </div>
+
+        <!-- Courses Tab -->
+        <div id="courses" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-book"></i> Manage Courses
+            </div>
+            
+            <button class="btn-success" onclick="showCourseForm()" style="margin-bottom: 1rem;">
+                <i class="fas fa-plus"></i> Add New Course
+            </button>
+
+            <div id="courseForm" class="admin-card" style="display: none;">
+                <h3 id="courseFormTitle">Add New Course</h3>
+                <form id="courseDataForm" enctype="multipart/form-data">
+                    <input type="hidden" id="courseId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="courseTitle" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Grade</label>
+                            <input type="text" id="courseGrade" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Subject</label>
+                            <input type="text" id="courseSubject" value="Maths">
+                        </div>
+                        <div class="form-group">
+                            <label>Board</label>
+                            <select id="courseBoard">
+                                <option>CBSE</option>
+                                <option>ICSE</option>
+                                <option>Matric</option>
+                                <option>All</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="courseDescription" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Price (0 for free)</label>
+                            <input type="number" id="coursePrice" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" id="courseDuration" placeholder="e.g., 2 months">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Timing</label>
+                            <input type="text" id="courseTiming" placeholder="e.g., Mon-Wed 5PM">
+                        </div>
+                        <div class="form-group">
+                            <label>Assigned Staff</label>
+                            <input type="text" id="courseStaff">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Course Image</label>
+                            <input type="file" id="courseImageFile" accept="image/*">
+                            <div class="upload-note">Max size: 10MB</div>
+                        </div>
+                        <div class="form-group">
+                            <label>Zoom/Meet Link</label>
+                            <input type="text" id="courseZoomLink">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="courseActive" checked> Active
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-success">Save Course</button>
+                    <button type="button" class="btn-warning" onclick="hideCourseForm()">Cancel</button>
+                </form>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Grade</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="courses-list">
+                        <tr><td colspan="6" style="text-align: center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Users Tab -->
+        <div id="users" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-users"></i> Manage Users
+            </div>
+            
+            <button class="btn-success" onclick="showAddAdminForm()" style="margin-bottom: 1rem;">
+                <i class="fas fa-user-plus"></i> Add New Admin
+            </button>
+
+            <div id="addAdminForm" class="admin-card" style="display: none;">
+                <h3>Create New Admin Account</h3>
+                <form id="adminCreateForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="adminName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" id="adminEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" id="adminPassword" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label>Role</label>
+                            <select id="adminRole">
+                                <option value="admin">Admin</option>
+                                <option value="editor">Editor</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-success">Create Admin</button>
+                    <button type="button" class="btn-warning" onclick="hideAddAdminForm()">Cancel</button>
+                </form>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Points</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-list">
+                        <tr><td colspan="6" style="text-align: center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Testimonials Tab -->
+        <div id="testimonials" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-comment"></i> Manage Testimonials
+            </div>
+            
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="testimonials-list">
+                        <tr><td colspan="5" style="text-align: center;">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Registrations Tab -->
+        <div id="registrations" class="tab-content">
+            <div class="section-title">
+                <i class="fas fa-clipboard-list"></i> Course Registrations
+            </div>
+            
+            <div class="form-group">
+                <label>Select Course</label>
+                <select id="courseSelect" onchange="loadRegistrations()" class="form-control">
+                    <option value="">Loading courses...</option>
+                </select>
+            </div>
+
+            <div style="margin: 1rem 0;">
+                <button class="btn-whatsapp" onclick="sendMessageToAllInCourse()" id="sendAllBtn" style="display: none;">
+                    <i class="fab fa-whatsapp"></i> Send Message to All
+                </button>
+            </div>
+
+            <div class="data-table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Attendance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrations-list">
+                        <tr><td colspan="6" style="text-align: center;">Select a course to view registrations</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement Modal for Course-Specific Messages -->
+    <div class="announcement-modal" id="courseMessageModal">
+        <div class="announcement-content">
+            <button class="announcement-close" onclick="closeCourseMessageModal()">&times;</button>
+            <h3>Send Message to Course Students</h3>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea id="modalMessage" rows="4" placeholder="Type your message... Use {link} for Zoom link"></textarea>
+            </div>
+            <div class="message-preview" id="modalPreview"></div>
+            <button class="btn-whatsapp" onclick="sendCourseMessage()">Send via WhatsApp</button>
+        </div>
+    </div>
+
+    <!-- Mobile Back Button Script -->
+    <script>
+        // Add back button for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const backButton = document.createElement('div');
+            backButton.className = 'mobile-back';
+            backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Back';
+            backButton.style.cssText = 'display: none; position: fixed; top: 10px; left: 10px; z-index: 2500; background: var(--primary); color: white; padding: 10px 15px; border-radius: 30px; font-size: 14px; cursor: pointer; box-shadow: var(--shadow-md); align-items: center; gap: 5px;';
+            backButton.onclick = function() {
+                if (document.referrer) {
+                    history.back();
+                } else {
+                    window.location.href = '../index.html';
+                }
+            };
+            document.body.appendChild(backButton);
+            
+            function updateBackButton() {
+                if (window.innerWidth <= 768) {
+                    backButton.style.display = 'flex';
+                } else {
+                    backButton.style.display = 'none';
+                }
+            }
+            
+            updateBackButton();
+            window.addEventListener('resize', updateBackButton);
+        });
+    </script>
+
+    <script>
+        // ===== ADMIN DASHBOARD JAVASCRIPT =====
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '../login.html';
+
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        if (user.role !== 'admin' && user.role !== 'editor') {
+            window.location.href = 'student.html';
+        }
+
+        document.getElementById('admin-name').textContent = user.name;
+
+        // Load profile image for header
+        async function loadProfileImage() {
+            try {
+                const res = await fetch('/api/users/profile', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const userData = await res.json();
+                
+                if (userData.profileImage) {
+                    document.getElementById('header-profile-img').src = userData.profileImage;
+                }
+            } catch (err) {
+                console.error('Error loading profile image:', err);
+            }
+        }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        function handleMobileLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        }
+
+        // Tab switching
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+            
+            if (tabId === 'overview') loadOverview();
+            if (tabId === 'courses') loadCourses();
+            if (tabId === 'users') loadUsers();
+            if (tabId === 'testimonials') loadTestimonials();
+            if (tabId === 'registrations') loadCoursesForSelect();
+            if (tabId === 'content') loadContent();
+            if (tabId === 'about') loadAboutSections();
+            if (tabId === 'social') loadSocialLinks();
+            if (tabId === 'announcements') loadCoursesForAnnouncement();
+        }
+
+        // Load overview stats
+        async function loadOverview() {
+            try {
+                const users = await fetch('/api/users', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
+                const courses = await fetch('/api/courses', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
+                
+                document.getElementById('overview-students').textContent = users.filter(u => u.role === 'student').length;
+                document.getElementById('overview-courses').textContent = courses.length;
+                document.getElementById('total-users').textContent = users.length;
+                document.getElementById('total-courses-mini').textContent = courses.length;
+                
+                try {
+                    const testimonials = await fetch('/api/testimonials/admin', { headers: { Authorization: `Bearer ${token}` } }).then(r => r.json());
+                    document.getElementById('overview-testimonials').textContent = testimonials.length;
+                    document.getElementById('total-testimonials-mini').textContent = testimonials.length;
+                } catch (err) {
+                    document.getElementById('overview-testimonials').textContent = '0';
+                    document.getElementById('total-testimonials-mini').textContent = '0';
+                }
+                
+                document.getElementById('overview-enrollments').textContent = '0';
+            } catch (err) {
+                console.error('Error loading overview:', err);
+            }
+        }
+
+        // ===== ABOUT SECTIONS FUNCTIONS =====
+        function addAboutSection(title = '', description = '', icon = 'fa-star') {
+            const container = document.getElementById('aboutSectionsContainer');
+            if (!container) return;
+            
+            const div = document.createElement('div');
+            div.className = 'dynamic-field';
+            div.innerHTML = `
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <input type="text" placeholder="Section Title" class="about-title" value="${title}" style="flex: 2;">
+                    <input type="text" placeholder="Icon (e.g., fa-brain, fa-users)" class="about-icon" value="${icon}" style="flex: 1;">
+                </div>
+                <textarea placeholder="Description" class="about-desc" rows="3" style="width: 100%; margin-bottom: 10px;">${description}</textarea>
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">
+                    <i class="fas fa-trash"></i> Remove Section
+                </button>
+            `;
+            container.appendChild(div);
+        }
+
+        async function loadAboutSections() {
+            const container = document.getElementById('aboutSectionsContainer');
+            if (!container) return;
+            
+            try {
+                container.innerHTML = '<div class="loading-spinner-small" style="margin: 2rem auto;"></div>';
+                
+                const res = await fetch('/api/site-content');
+                if (!res.ok) throw new Error('Failed to load');
+                
+                const data = await res.json();
+                console.log('Loaded about sections:', data.aboutSections);
+                
+                container.innerHTML = '';
+                
+                if (data.aboutSections && data.aboutSections.length > 0) {
+                    data.aboutSections.forEach(section => {
+                        addAboutSection(section.title, section.description, section.icon || 'fa-star');
+                    });
+                } else {
+                    addAboutSection('Cognitive Approach', 'We use proven cognitive learning techniques to make math concepts stick.', 'fa-brain');
+                    addAboutSection('Individual Attention', 'Small class sizes ensure every student gets the attention they deserve.', 'fa-users');
+                    addAboutSection('Track Progress', 'Regular assessments and feedback to monitor improvement.', 'fa-chart-line');
+                }
+            } catch (err) {
+                console.error('Error loading about sections:', err);
+                container.innerHTML = '<p style="color: #dc3545; text-align: center;">Error loading about sections. Please refresh.</p>';
+            }
+        }
+
+        async function saveAboutSections() {
+            const saveBtn = document.getElementById('saveAboutBtn');
+            const originalText = saveBtn.innerHTML;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            saveBtn.disabled = true;
+            
+            const aboutMessage = document.getElementById('aboutMessage');
+            
+            try {
+                const aboutSections = [];
+                document.querySelectorAll('#aboutSectionsContainer .dynamic-field').forEach(div => {
+                    const title = div.querySelector('.about-title')?.value;
+                    const description = div.querySelector('.about-desc')?.value;
+                    const icon = div.querySelector('.about-icon')?.value || 'fa-star';
+                    
+                    if (title && title.trim() !== '' && description && description.trim() !== '') {
+                        aboutSections.push({ 
+                            title: title.trim(), 
+                            description: description.trim(), 
+                            icon: icon.trim() 
+                        });
+                    }
+                });
+
+                if (aboutSections.length === 0) {
+                    alert('Please add at least one about section');
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.disabled = false;
+                    return;
+                }
+
+                console.log('Saving about sections:', aboutSections);
+
+                const getRes = await fetch('/api/site-content');
+                const data = await getRes.json();
+                
+                data.aboutSections = aboutSections;
+                
+                const updateRes = await fetch('/api/site-content', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const response = await updateRes.json();
+
+                if (updateRes.ok) {
+                    aboutMessage.style.display = 'block';
+                    aboutMessage.className = 'success-message visible';
+                    aboutMessage.innerHTML = '<i class="fas fa-check-circle"></i> About sections saved successfully!';
+                    setTimeout(() => {
+                        aboutMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error(response.message || 'Error saving about sections');
+                }
+            } catch (err) {
+                console.error('Error saving about sections:', err);
+                aboutMessage.style.display = 'block';
+                aboutMessage.className = 'error-message visible';
+                aboutMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + err.message;
+                setTimeout(() => {
+                    aboutMessage.style.display = 'none';
+                }, 3000);
+            } finally {
+                saveBtn.innerHTML = originalText;
+                saveBtn.disabled = false;
+            }
+        }
+
+        // ===== SOCIAL LINKS FUNCTIONS =====
+        async function loadSocialLinks() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+                
+                if (data.socialLinks) {
+                    document.getElementById('facebookUrl').value = data.socialLinks.facebook?.url || '';
+                    document.getElementById('facebookVisible').checked = data.socialLinks.facebook?.visible || false;
+                    
+                    document.getElementById('twitterUrl').value = data.socialLinks.twitter?.url || '';
+                    document.getElementById('twitterVisible').checked = data.socialLinks.twitter?.visible || false;
+                    
+                    document.getElementById('instagramUrl').value = data.socialLinks.instagram?.url || '';
+                    document.getElementById('instagramVisible').checked = data.socialLinks.instagram?.visible || false;
+                    
+                    document.getElementById('youtubeUrl').value = data.socialLinks.youtube?.url || '';
+                    document.getElementById('youtubeVisible').checked = data.socialLinks.youtube?.visible || false;
+                    
+                    document.getElementById('linkedinUrl').value = data.socialLinks.linkedin?.url || '';
+                    document.getElementById('linkedinVisible').checked = data.socialLinks.linkedin?.visible || false;
+                }
+            } catch (err) {
+                console.error('Error loading social links:', err);
+            }
+        }
+
+        document.getElementById('socialForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const socialLinks = {
+                facebook: {
+                    url: document.getElementById('facebookUrl').value,
+                    visible: document.getElementById('facebookVisible').checked
+                },
+                twitter: {
+                    url: document.getElementById('twitterUrl').value,
+                    visible: document.getElementById('twitterVisible').checked
+                },
+                instagram: {
+                    url: document.getElementById('instagramUrl').value,
+                    visible: document.getElementById('instagramVisible').checked
+                },
+                youtube: {
+                    url: document.getElementById('youtubeUrl').value,
+                    visible: document.getElementById('youtubeVisible').checked
+                },
+                linkedin: {
+                    url: document.getElementById('linkedinUrl').value,
+                    visible: document.getElementById('linkedinVisible').checked
+                }
+            };
+
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+                data.socialLinks = socialLinks;
+                
+                const updateRes = await fetch('/api/site-content', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (updateRes.ok) {
+                    alert('✅ Social links saved successfully!');
+                } else {
+                    alert('Error saving social links');
+                }
+            } catch (err) {
+                alert('Error saving social links');
+            }
+        });
+
+        // ===== ANNOUNCEMENT FUNCTIONS =====
+        async function loadCoursesForAnnouncement() {
+            try {
+                const res = await fetch('/api/courses', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const courses = await res.json();
+                
+                const select = document.getElementById('announceCourseSelect');
+                select.innerHTML = '<option value="">Select a course</option>' + 
+                    courses.map(c => `<option value="${c._id}" data-zoom="${c.zoomLink || ''}">${c.title} - Grade ${c.grade}</option>`).join('');
+                
+                select.addEventListener('change', updateMessagePreview);
+                document.getElementById('courseMessage').addEventListener('input', updateMessagePreview);
+            } catch (err) {
+                console.error('Error loading courses:', err);
+            }
+        }
+
+        function updateMessagePreview() {
+            const courseSelect = document.getElementById('announceCourseSelect');
+            const message = document.getElementById('courseMessage').value;
+            const selectedOption = courseSelect.options[courseSelect.selectedIndex];
+            const zoomLink = selectedOption ? selectedOption.dataset.zoom : '';
+            
+            let preview = message || 'Type your message...';
+            preview = preview.replace(/{link}/g, zoomLink || '[Zoom link will be inserted]');
+            
+            document.getElementById('messagePreview').textContent = preview;
+        }
+
+        async function sendGlobalAnnouncement() {
+            const message = document.getElementById('globalMessage').value.trim();
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            try {
+                const usersRes = await fetch('/api/users', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const users = await usersRes.json();
+                
+                const students = users.filter(u => u.role === 'student');
+                
+                let sentCount = 0;
+                for (const student of students) {
+                    if (student.parentPhone) {
+                        sentCount++;
+                    }
+                }
+                
+                alert(`✅ Announcement ready! ${sentCount} students will receive this message.\n\nOpening WhatsApp for the first student.`);
+                
+                if (students.length > 0 && students[0].parentPhone) {
+                    const phone = students[0].parentPhone.replace(/\D/g, '');
+                    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                }
+            } catch (err) {
+                console.error('Error sending announcement:', err);
+                alert('Error sending announcement');
+            }
+        }
+
+        async function sendCourseAnnouncement() {
+            const courseId = document.getElementById('announceCourseSelect').value;
+            const message = document.getElementById('courseMessage').value.trim();
+            
+            if (!courseId || !message) {
+                alert('Please select a course and enter a message');
+                return;
+            }
+
+            try {
+                const courseRes = await fetch(`/api/courses/${courseId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const course = await courseRes.json();
+                
+                const regRes = await fetch(`/api/registrations/course/${courseId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const registrations = await regRes.json();
+                
+                const finalMessage = message.replace(/{link}/g, course.zoomLink || '');
+                
+                let sentCount = 0;
+                for (const reg of registrations) {
+                    if (reg.user.parentPhone) {
+                        sentCount++;
+                    }
+                }
+                
+                alert(`✅ Message ready! ${sentCount} students in this course will receive:\n\n${finalMessage}\n\nOpening WhatsApp for the first student.`);
+                
+                if (registrations.length > 0 && registrations[0].user.parentPhone) {
+                    const phone = registrations[0].user.parentPhone.replace(/\D/g, '');
+                    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(finalMessage)}`;
+                    window.open(whatsappUrl, '_blank');
+                }
+            } catch (err) {
+                console.error('Error sending course announcement:', err);
+                alert('Error sending announcement');
+            }
+        }
+
+        // ===== COURSE-SPECIFIC MESSAGING =====
+        let currentCourseId = '';
+        let currentCourseZoom = '';
+
+        function openCourseMessageModal(courseId, courseName, zoomLink) {
+            currentCourseId = courseId;
+            currentCourseZoom = zoomLink || '';
+            document.getElementById('modalMessage').value = `Your class for ${courseName} is ready! Join here: {link}`;
+            document.getElementById('modalPreview').textContent = `Your class for ${courseName} is ready! Join here: ${zoomLink || '[Zoom link]'}`;
+            document.getElementById('courseMessageModal').classList.add('active');
+        }
+
+        function closeCourseMessageModal() {
+            document.getElementById('courseMessageModal').classList.remove('active');
+        }
+
+        document.getElementById('modalMessage')?.addEventListener('input', function() {
+            const preview = this.value.replace(/{link}/g, currentCourseZoom || '[Zoom link]');
+            document.getElementById('modalPreview').textContent = preview;
+        });
+
+        async function sendCourseMessage() {
+            const message = document.getElementById('modalMessage').value.trim();
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            try {
+                const regRes = await fetch(`/api/registrations/course/${currentCourseId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const registrations = await regRes.json();
+                
+                const finalMessage = message.replace(/{link}/g, currentCourseZoom);
+                
+                let sentCount = 0;
+                for (const reg of registrations) {
+                    if (reg.user.parentPhone) {
+                        sentCount++;
+                    }
+                }
+                
+                alert(`✅ Message ready! ${sentCount} students will receive:\n\n${finalMessage}\n\nOpening WhatsApp for the first student.`);
+                
+                if (registrations.length > 0 && registrations[0].user.parentPhone) {
+                    const phone = registrations[0].user.parentPhone.replace(/\D/g, '');
+                    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(finalMessage)}`;
+                    window.open(whatsappUrl, '_blank');
+                }
+                
+                closeCourseMessageModal();
+            } catch (err) {
+                console.error('Error sending message:', err);
+                alert('Error sending message');
+            }
+        }
+
+        async function sendMessageToAllInCourse() {
+            const courseId = document.getElementById('courseSelect').value;
+            if (!courseId) return;
+            
+            try {
+                const courseRes = await fetch(`/api/courses/${courseId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const course = await courseRes.json();
+                
+                openCourseMessageModal(courseId, course.title, course.zoomLink);
+            } catch (err) {
+                console.error('Error loading course:', err);
+            }
+        }
+
+        // ===== CONTENT EDITOR FUNCTIONS =====
+        function addStatField(label = '', value = '') {
+            const div = document.createElement('div');
+            div.className = 'dynamic-field';
+            div.innerHTML = `
+                <input type="text" placeholder="Label" class="stat-label" value="${label}">
+                <input type="text" placeholder="Value" class="stat-value" value="${value}">
+                <input type="file" class="stat-image-file" accept="image/*">
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">✖ Remove Stat</button>
+            `;
+            document.getElementById('statsContainer').appendChild(div);
+        }
+
+        function addTeacherField(name = '', qualification = '') {
+            const div = document.createElement('div');
+            div.className = 'dynamic-field';
+            div.innerHTML = `
+                <input type="text" placeholder="Name" class="teacher-name" value="${name}">
+                <input type="text" placeholder="Qualification" class="teacher-qual" value="${qualification}">
+                <input type="file" class="teacher-image-file" accept="image/*">
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">✖ Remove Teacher</button>
+            `;
+            document.getElementById('teachersContainer').appendChild(div);
+        }
+
+        function addVideoField(title = '', url = '') {
+            const div = document.createElement('div');
+            div.className = 'dynamic-field';
+            div.innerHTML = `
+                <input type="text" placeholder="Video Title" class="video-title" value="${title}">
+                <input type="text" placeholder="YouTube URL" class="video-url" value="${url}">
+                <button type="button" class="remove-btn" onclick="this.parentElement.remove()">✖ Remove Video</button>
+            `;
+            document.getElementById('videosContainer').appendChild(div);
+        }
+
+        document.getElementById('logoFile')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File too large! Maximum size is 10MB.');
+                    this.value = '';
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('logoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        async function loadContent() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+
+                document.getElementById('heroTagline').value = data.hero?.tagline || '';
+                document.getElementById('contactPhone').value = data.contact?.phone || '';
+                document.getElementById('contactEmail').value = data.contact?.email || '';
+
+                if (data.logo) {
+                    document.getElementById('logoPreview').src = data.logo;
+                    document.getElementById('logoPreview').style.display = 'block';
+                }
+
+                document.getElementById('statsContainer').innerHTML = '';
+                if (data.stats && data.stats.length) {
+                    data.stats.forEach(stat => addStatField(stat.label, stat.value));
+                } else {
+                    addStatField('Students', '100+');
+                    addStatField('Courses', '10+');
+                }
+
+                document.getElementById('teachersContainer').innerHTML = '';
+                if (data.teachers && data.teachers.length) {
+                    data.teachers.forEach(teacher => addTeacherField(teacher.name, teacher.qualification));
+                } else {
+                    addTeacherField('Eswari', 'Math Expert');
+                }
+
+                document.getElementById('videosContainer').innerHTML = '';
+                if (data.videos && data.videos.length) {
+                    data.videos.forEach(video => addVideoField(video.title, video.url));
+                }
+            } catch (err) {
+                console.error('Error loading content:', err);
+            }
+        }
+
+        document.getElementById('contentForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+            let hasError = false;
+
+            const logoFile = document.getElementById('logoFile').files[0];
+            if (logoFile) {
+                if (logoFile.size > 10 * 1024 * 1024) {
+                    alert('Logo file too large!');
+                    hasError = true;
+                }
+                formData.append('logo', logoFile);
+            }
+
+            const heroImage = document.getElementById('heroImage').files[0];
+            if (heroImage) {
+                if (heroImage.size > 10 * 1024 * 1024) {
+                    alert('Hero image too large!');
+                    hasError = true;
+                }
+                formData.append('heroBackground', heroImage);
+            }
+
+            if (hasError) return;
+
+            formData.append('heroTagline', document.getElementById('heroTagline').value);
+            formData.append('contactPhone', document.getElementById('contactPhone').value);
+            formData.append('contactEmail', document.getElementById('contactEmail').value);
+
+            const stats = [];
+            let statIndex = 0;
+            document.querySelectorAll('#statsContainer .dynamic-field').forEach((div) => {
+                const label = div.querySelector('.stat-label')?.value;
+                const value = div.querySelector('.stat-value')?.value;
+                const file = div.querySelector('.stat-image-file')?.files[0];
+                
+                if (label && value) {
+                    stats.push({ label, value });
+                    if (file) {
+                        formData.append(`statImage${statIndex}`, file);
+                    }
+                    statIndex++;
+                }
+            });
+            formData.append('stats', JSON.stringify(stats));
+
+            const teachers = [];
+            let teacherIndex = 0;
+            document.querySelectorAll('#teachersContainer .dynamic-field').forEach((div) => {
+                const name = div.querySelector('.teacher-name')?.value;
+                const qual = div.querySelector('.teacher-qual')?.value;
+                const file = div.querySelector('.teacher-image-file')?.files[0];
+                
+                if (name && qual) {
+                    teachers.push({ name, qualification: qual });
+                    if (file) {
+                        formData.append(`teacherImage${teacherIndex}`, file);
+                    }
+                    teacherIndex++;
+                }
+            });
+            formData.append('teachers', JSON.stringify(teachers));
+
+            const videos = [];
+            document.querySelectorAll('#videosContainer .dynamic-field').forEach(div => {
+                const title = div.querySelector('.video-title')?.value;
+                const url = div.querySelector('.video-url')?.value;
+                if (title && url) videos.push({ title, url });
+            });
+            formData.append('videos', JSON.stringify(videos));
+
+            try {
+                const res = await fetch('/api/site-content/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const responseData = await res.json();
+
+                if (res.ok) {
+                    alert('✅ Content saved successfully!');
+                } else {
+                    alert('❌ Error saving content: ' + (responseData.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('❌ Error saving content: ' + err.message);
+            }
+        });
+
+        // ===== COURSE FUNCTIONS =====
+        function showCourseForm() {
+            document.getElementById('courseForm').style.display = 'block';
+        }
+
+        function hideCourseForm() {
+            document.getElementById('courseForm').style.display = 'none';
+            document.getElementById('courseDataForm').reset();
+            document.getElementById('courseId').value = '';
+        }
+
+        async function loadCourses() {
+            try {
+                const res = await fetch('/api/courses', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const courses = await res.json();
+                
+                const tbody = document.getElementById('courses-list');
+                
+                if (courses.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No courses found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = courses.map(c => `
+                    <tr>
+                        <td><img src="${c.image || 'https://img.icons8.com/fluency/96/000000/math.png'}" style="width:40px; height:40px; object-fit:cover; border-radius:5px;"></td>
+                        <td>${c.title}</td>
+                        <td>${c.grade}</td>
+                        <td>${c.price === 0 ? 'FREE' : '₹' + c.price}</td>
+                        <td><span class="badge ${c.isActive ? 'badge-success' : 'badge-warning'}">${c.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editCourse('${c._id}')"><i class="fas fa-edit"></i> Edit</button>
+                            <button class="btn-action btn-delete" onclick="deleteCourse('${c._id}')"><i class="fas fa-trash"></i> Del</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading courses:', err);
+            }
+        }
+
+        async function editCourse(id) {
+            try {
+                const res = await fetch(`/api/courses/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const c = await res.json();
+                
+                document.getElementById('courseId').value = c._id;
+                document.getElementById('courseTitle').value = c.title;
+                document.getElementById('courseGrade').value = c.grade;
+                document.getElementById('courseSubject').value = c.subject;
+                document.getElementById('courseBoard').value = c.board;
+                document.getElementById('courseDescription').value = c.description || '';
+                document.getElementById('coursePrice').value = c.price;
+                document.getElementById('courseDuration').value = c.duration || '';
+                document.getElementById('courseTiming').value = c.timing || '';
+                document.getElementById('courseStaff').value = c.assignedStaff || '';
+                document.getElementById('courseZoomLink').value = c.zoomLink || '';
+                document.getElementById('courseActive').checked = c.isActive;
+                
+                document.getElementById('courseFormTitle').textContent = 'Edit Course';
+                showCourseForm();
+            } catch (err) {
+                alert('Error loading course');
+            }
+        }
+
+        async function deleteCourse(id) {
+            if (!confirm('Delete this course?')) return;
+            
+            try {
+                await fetch(`/api/courses/${id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                loadCourses();
+            } catch (err) {
+                alert('Error deleting course');
+            }
+        }
+
+        document.getElementById('courseDataForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('courseId').value;
+            const formData = new FormData();
+            
+            formData.append('title', document.getElementById('courseTitle').value);
+            formData.append('grade', document.getElementById('courseGrade').value);
+            formData.append('subject', document.getElementById('courseSubject').value);
+            formData.append('board', document.getElementById('courseBoard').value);
+            formData.append('description', document.getElementById('courseDescription').value);
+            formData.append('price', document.getElementById('coursePrice').value);
+            formData.append('duration', document.getElementById('courseDuration').value);
+            formData.append('timing', document.getElementById('courseTiming').value);
+            formData.append('assignedStaff', document.getElementById('courseStaff').value);
+            formData.append('zoomLink', document.getElementById('courseZoomLink').value);
+            formData.append('isActive', document.getElementById('courseActive').checked);
+            
+            const courseImage = document.getElementById('courseImageFile').files[0];
+            if (courseImage) {
+                if (courseImage.size > 10 * 1024 * 1024) {
+                    alert('Course image too large!');
+                    return;
+                }
+                formData.append('courseImage', courseImage);
+            }
+
+            try {
+                const url = id ? `/api/courses/${id}` : '/api/courses';
+                const method = id ? 'PUT' : 'POST';
+                
+                const res = await fetch(url, {
+                    method,
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert(`✅ Course ${id ? 'updated' : 'created'} successfully!`);
+                    hideCourseForm();
+                    loadCourses();
+                } else {
+                    const data = await res.json();
+                    alert('❌ Error saving course: ' + (data.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('❌ Error saving course: ' + err.message);
+            }
+        });
+
+        // ===== USER FUNCTIONS =====
+        function showAddAdminForm() {
+            document.getElementById('addAdminForm').style.display = 'block';
+        }
+
+        function hideAddAdminForm() {
+            document.getElementById('addAdminForm').style.display = 'none';
+            document.getElementById('adminCreateForm').reset();
+        }
+
+        // FIXED ADMIN CREATION FUNCTION
+        document.getElementById('adminCreateForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const adminData = {
+                name: document.getElementById('adminName').value,
+                email: document.getElementById('adminEmail').value,
+                password: document.getElementById('adminPassword').value,
+                role: document.getElementById('adminRole').value
+            };
+
+            // Validate form
+            if (!adminData.name || !adminData.email || !adminData.password) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+            submitBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(adminData)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert(`✅ ${adminData.role} created successfully!`);
+                    // Hide the form
+                    document.getElementById('addAdminForm').style.display = 'none';
+                    // Reset the form
+                    document.getElementById('adminCreateForm').reset();
+                    // Refresh user list
+                    loadUsers();
+                } else {
+                    alert('❌ Error: ' + (data.message || 'Failed to create admin'));
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('❌ Error creating admin: ' + err.message);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/users', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const users = await res.json();
+                
+                const tbody = document.getElementById('users-list');
+                
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td>${u.name}</td>
+                        <td>${u.email}</td>
+                        <td><span class="badge ${u.role === 'admin' ? 'badge-success' : u.role === 'editor' ? 'badge-info' : 'badge-warning'}">${u.role}</span></td>
+                        <td>${u.parentPhone || '-'}</td>
+                        <td>${u.points || 0}</td>
+                        <td>
+                            <button class="btn-action btn-delete" onclick="deleteUser('${u._id}')"><i class="fas fa-trash"></i> Del</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading users:', err);
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Delete this user?')) return;
+            
+            try {
+                await fetch(`/api/users/${id}`, {
+                    method: 'DELETE',
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                loadUsers();
+                loadOverview();
+            } catch (err) {
+                alert('Error deleting user');
+            }
+        }
+
+        // ===== TESTIMONIAL FUNCTIONS =====
+        async function loadTestimonials() {
+            try {
+                const res = await fetch('/api/testimonials/admin', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const testimonials = await res.json();
+                
+                const tbody = document.getElementById('testimonials-list');
+                
+                if (testimonials.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No testimonials</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = testimonials.map(t => `
+                    <tr>
+                        <td>${t.name}</td>
+                        <td>${'★'.repeat(t.rating)}${'☆'.repeat(5-t.rating)}</td>
+                        <td>${t.comment.substring(0, 50)}${t.comment.length > 50 ? '...' : ''}</td>
+                        <td><span class="badge ${t.approved ? 'badge-success' : 'badge-warning'}">${t.approved ? 'Approved' : 'Pending'}</span></td>
+                        <td>
+                            <button class="btn-action ${t.approved ? 'btn-warning' : 'btn-success'}" 
+                                    onclick="toggleApprove('${t._id}', ${!t.approved})">
+                                ${t.approved ? 'Unapprove' : 'Approve'}
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading testimonials:', err);
+            }
+        }
+
+        async function toggleApprove(id, approved) {
+            try {
+                await fetch(`/api/testimonials/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ approved })
+                });
+                loadTestimonials();
+            } catch (err) {
+                alert('Error updating testimonial');
+            }
+        }
+
+        // ===== REGISTRATION FUNCTIONS =====
+        async function loadCoursesForSelect() {
+            try {
+                const res = await fetch('/api/courses', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const courses = await res.json();
+                
+                const select = document.getElementById('courseSelect');
+                select.innerHTML = '<option value="">Select a course</option>' + 
+                    courses.map(c => `<option value="${c._id}">${c.title} - Grade ${c.grade}</option>`).join('');
+            } catch (err) {
+                console.error('Error loading courses:', err);
+            }
+        }
+
+        async function loadRegistrations() {
+            const courseId = document.getElementById('courseSelect').value;
+            if (!courseId) return;
+
+            try {
+                const res = await fetch(`/api/registrations/course/${courseId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const registrations = await res.json();
+                
+                document.getElementById('sendAllBtn').style.display = registrations.length ? 'inline-block' : 'none';
+                
+                const tbody = document.getElementById('registrations-list');
+                
+                if (registrations.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No registrations found</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = registrations.map(r => `
+                    <tr>
+                        <td>${r.user.name}</td>
+                        <td>${r.user.parentPhone || '-'}</td>
+                        <td>${r.user.email}</td>
+                        <td><span class="badge ${r.paymentStatus === 'paid' ? 'badge-success' : 'badge-warning'}">${r.paymentStatus}</span></td>
+                        <td>
+                            <span class="badge ${r.attended ? 'badge-success' : 'badge-warning'}" 
+                                  onclick="markAttendance('${r._id}', ${!r.attended})" style="cursor: pointer;">
+                                ${r.attended ? '✅ Attended' : '⏳ Mark Attend'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn-action btn-whatsapp" onclick="sendWhatsApp('${r.user.parentPhone}', '${r.course?.title}', '${r.course?.zoomLink}')">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                console.error('Error loading registrations:', err);
+            }
+        }
+
+        async function markAttendance(regId, attended) {
+            try {
+                await fetch(`/api/registrations/${regId}/attendance`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ attended })
+                });
+                loadRegistrations();
+            } catch (err) {
+                alert('Error marking attendance');
+            }
+        }
+
+        function sendWhatsApp(phone, courseName, zoomLink) {
+            if (!zoomLink) {
+                alert('Please add a Zoom link to the course first');
+                return;
+            }
+            
+            const cleanPhone = phone ? phone.replace(/\D/g, '') : '';
+            if (!cleanPhone) {
+                alert('No phone number available');
+                return;
+            }
+            
+            const message = `*Cognitive Math*\n\nYour class for *${courseName}* is ready!\n\n🔗 Join: ${zoomLink}`;
+            const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // ===== LOGOUT =====
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+
+        document.getElementById('mobileLogoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        loadProfileImage();
+        loadOverview();
+    </script>
+</body>
+</html>

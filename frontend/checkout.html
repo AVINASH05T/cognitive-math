@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Checkout - Cognitive Math</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .checkout-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .checkout-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .course-summary {
+            background: var(--light-bg);
+            padding: 1.2rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1.2rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .course-summary img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+        }
+
+        .course-info {
+            flex: 1;
+        }
+
+        .course-info h3 {
+            margin-bottom: 0.3rem;
+            color: var(--primary-dark);
+            font-size: 1.2rem;
+        }
+
+        .course-info p {
+            color: var(--gray);
+            margin-bottom: 0.2rem;
+            font-size: 0.9rem;
+        }
+
+        .price-tag {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 0.3rem;
+        }
+
+        #payment-element {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 2px solid var(--light-bg);
+            border-radius: var(--radius-md);
+        }
+
+        #submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        #submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        #submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #error-message {
+            color: #dc3545;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            background: #f8d7da;
+            border-radius: var(--radius-sm);
+            display: none;
+            font-size: 0.95rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .loading-spinner {
+            border: 4px solid var(--light-bg);
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .secure-badge i {
+            color: var(--success);
+        }
+
+        .payment-methods {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .payment-methods img {
+            height: 30px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 480px) {
+            .course-summary {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .course-summary img {
+                width: 100px;
+                height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Help Icon -->
+    <div class="top-bar">
+        <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Payment%20Help'">
+            <i class="fas fa-question-circle"></i>
+            <span>Payment Support</span>
+        </div>
+        <div class="social-header" id="social-header"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img id="logo-img" src="" alt="Cognitive Math" onerror="this.src='https://via.placeholder.com/45x45?text=CM'">
+                <span>Cognitive Math</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+                <a href="#" id="dashboardLink">Dashboard</a>
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+            <a href="courses.html" onclick="toggleMobileMenu()">Courses</a>
+            <a href="#" id="mobileDashboardLink" onclick="toggleMobileMenu()">Dashboard</a>
+            <a href="#" id="mobileLogoutLink" onclick="handleMobileLogout()">Logout</a>
+        </div>
+    </div>
+
+    <div class="checkout-container">
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading course details...</p>
+        </div>
+
+        <div id="checkout-content" style="display: none;">
+            <h1 style="margin-bottom: 1.5rem; font-size: 1.8rem;">Complete Your Enrollment</h1>
+            
+            <div class="checkout-card">
+                <div id="course-summary" class="course-summary">
+                    <!-- Course details will be loaded here -->
+                </div>
+
+                <form id="payment-form">
+                    <div id="payment-element">
+                        <!-- Stripe Elements will create form here -->
+                    </div>
+                    
+                    <button id="submit-btn">
+                        <span id="button-text">Pay now</span>
+                    </button>
+                    
+                    <div id="error-message"></div>
+                    
+                    <div class="secure-badge">
+                        <i class="fas fa-lock"></i>
+                        <span>Secure payment powered by Stripe</span>
+                    </div>
+                    
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa fa-2x" style="color: #1A1F71;"></i>
+                        <i class="fab fa-cc-mastercard fa-2x" style="color: #EB001B;"></i>
+                        <i class="fab fa-cc-amex fa-2x" style="color: #2E77BB;"></i>
+                        <i class="fab fa-cc-paypal fa-2x" style="color: #003087;"></i>
+                        <i class="fab fa-google-pay fa-2x"></i>
+                        <i class="fab fa-apple-pay fa-2x"></i>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div id="success-content" style="display: none;">
+            <div class="checkout-card" style="text-align: center;">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success); margin-bottom: 1rem;"></i>
+                <h2>Payment Successful!</h2>
+                <p style="margin: 1rem 0; color: var(--gray);">You have successfully enrolled in the course.</p>
+                <p style="margin-bottom: 2rem;">Check your dashboard to access the course materials.</p>
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <a href="dashboard/student.html" class="btn-primary">Go to Dashboard</a>
+                    <a href="courses.html" class="btn-outline" style="color: var(--primary); border-color: var(--primary);">Browse More Courses</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Replace with your Stripe publishable key
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_YOUR_PUBLISHABLE_KEY_HERE';
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Get user from localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        // Set dashboard links
+        const dashboardLink = document.getElementById('dashboardLink');
+        const mobileDashboardLink = document.getElementById('mobileDashboardLink');
+        
+        if (user.role === 'admin' || user.role === 'editor') {
+            dashboardLink.href = 'dashboard/admin.html';
+            mobileDashboardLink.href = 'dashboard/admin.html';
+        } else {
+            dashboardLink.href = 'dashboard/student.html';
+            mobileDashboardLink.href = 'dashboard/student.html';
+        }
+
+        // Get course ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+
+        if (!courseId) {
+            window.location.href = 'courses.html';
+        }
+
+        // Stripe initialization
+        const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        function handleMobileLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        }
+
+        // Load site content
+        async function loadSiteContent() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+                
+                // Logo
+                if (data.logo) {
+                    document.getElementById('logo-img').src = data.logo;
+                }
+
+                // Social Links (Header)
+                const socialHeader = document.getElementById('social-header');
+                if (data.socialLinks) {
+                    let socialHtml = '';
+                    const socialOrder = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin'];
+                    socialOrder.forEach(platform => {
+                        if (data.socialLinks[platform] && data.socialLinks[platform].visible) {
+                            let icon = '';
+                            switch(platform) {
+                                case 'facebook': icon = 'fab fa-facebook-f'; break;
+                                case 'twitter': icon = 'fab fa-twitter'; break;
+                                case 'instagram': icon = 'fab fa-instagram'; break;
+                                case 'youtube': icon = 'fab fa-youtube'; break;
+                                case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+                            }
+                            socialHtml += `<a href="${data.socialLinks[platform].url}" target="_blank"><i class="${icon}"></i></a>`;
+                        }
+                    });
+                    if (socialHtml) {
+                        socialHeader.innerHTML = socialHtml;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading site content:', err);
+            }
+        }
+
+        // Load course details
+        async function loadCourseDetails() {
+            try {
+                const res = await fetch(`/api/courses/${courseId}`);
+                const course = await res.json();
+
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('checkout-content').style.display = 'block';
+
+                const imageUrl = course.image 
+                    ? course.image.startsWith('http') 
+                        ? course.image 
+                        : `${window.location.origin}${course.image}`
+                    : 'https://img.icons8.com/fluency/96/000000/math.png';
+
+                document.getElementById('course-summary').innerHTML = `
+                    <img src="${imageUrl}" 
+                         alt="${course.title}"
+                         onerror="this.src='https://img.icons8.com/fluency/96/000000/math.png'">
+                    <div class="course-info">
+                        <h3>${course.title}</h3>
+                        <p><i class="fas fa-layer-group"></i> Grade ${course.grade}</p>
+                        <p><i class="fas fa-clock"></i> ${course.timing || 'Flexible'}</p>
+                        <p><i class="fas fa-book"></i> ${course.board}</p>
+                        <div class="price-tag">₹${course.price}</div>
+                    </div>
+                `;
+
+                // Initialize payment
+                await initializePayment(courseId, course.price);
+            } catch (err) {
+                console.error('Error loading course:', err);
+                alert('Error loading course details');
+                window.location.href = 'courses.html';
+            }
+        }
+
+        // Initialize payment
+        async function initializePayment(courseId, amount) {
+            try {
+                // Create payment intent
+                const res = await fetch('/api/payments/create-payment-intent', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ courseId })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.message || 'Failed to initialize payment');
+                }
+
+                const { clientSecret } = data;
+
+                // Appearance
+                const appearance = {
+                    theme: 'stripe',
+                    variables: {
+                        colorPrimary: '#2B7A78',
+                        colorBackground: '#FFFFFF',
+                        colorText: '#17252A',
+                        colorDanger: '#dc3545',
+                        fontFamily: 'Inter, system-ui, sans-serif',
+                        borderRadius: '8px',
+                    }
+                };
+
+                // Initialize Elements
+                const elements = stripe.elements({ appearance, clientSecret });
+
+                // Create Payment Element
+                const paymentElement = elements.create('payment');
+                paymentElement.mount('#payment-element');
+
+                // Handle form submission
+                const form = document.getElementById('payment-form');
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    setLoading(true);
+
+                    const { error } = await stripe.confirmPayment({
+                        elements,
+                        confirmParams: {
+                            return_url: `${window.location.origin}/payment-success.html?courseId=${courseId}`,
+                        },
+                    });
+
+                    if (error) {
+                        showError(error.message);
+                        setLoading(false);
+                    }
+                });
+
+            } catch (err) {
+                console.error('Error:', err);
+                showError(err.message);
+                document.getElementById('submit-btn').disabled = true;
+            }
+        }
+
+        // Helper functions
+        function setLoading(isLoading) {
+            const submitBtn = document.getElementById('submit-btn');
+            const buttonText = document.getElementById('button-text');
+            
+            if (isLoading) {
+                submitBtn.disabled = true;
+                buttonText.textContent = 'Processing...';
+            } else {
+                submitBtn.disabled = false;
+                buttonText.textContent = 'Pay now';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Check for payment success (if redirected back)
+        if (window.location.search.includes('payment_intent')) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('success-content').style.display = 'block';
+        }
+
+        // Logout
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        document.getElementById('mobileLogoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'index.html';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        loadSiteContent();
+        
+        if (!window.location.search.includes('payment_intent')) {
+            loadCourseDetails();
+        }
+    </script>
+</body>
+</html>

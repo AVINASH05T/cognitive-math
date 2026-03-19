@@ -1,0 +1,56 @@
+<div>
+    <h2>My Courses</h2>
+    <div id="myCourses"></div>
+    <h2>Leaderboard</h2>
+    <ul id="leaderboard"></ul>
+</div>
+<script>
+    // Replace the loadMyCourses function in student.html with this:
+async function loadMyCourses() {
+    try {
+        const res = await fetch('/api/registrations/my', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const registrations = await res.json();
+        
+        const container = document.getElementById('my-courses');
+        
+        if (registrations.length === 0) {
+            container.innerHTML = '<p>You haven\'t enrolled in any courses yet. <a href="/courses.html">Browse courses</a></p>';
+            return;
+        }
+
+        container.innerHTML = registrations.map(reg => {
+            const statusClass = reg.completed ? 'completed' : (reg.attended ? 'attended' : 'upcoming');
+            const statusText = reg.completed ? '✓ Completed' : (reg.attended ? 'Attended' : 'Upcoming');
+            
+            return `
+                <div class="course-card">
+                    <h3>${reg.course.title}</h3>
+                    <p><strong>Grade:</strong> ${reg.course.grade}</p>
+                    <p><strong>Board:</strong> ${reg.course.board}</p>
+                    <p><strong>Timing:</strong> ${reg.course.timing || 'Flexible'}</p>
+                    <p><strong>Teacher:</strong> ${reg.course.assignedStaff || 'TBA'}</p>
+                    <p><strong>Duration:</strong> ${reg.course.duration || 'Ongoing'}</p>
+                    <p class="${statusClass}"><strong>Status:</strong> ${statusText}</p>
+                    ${reg.course.zoomLink ? `<a href="${reg.course.zoomLink}" target="_blank" class="btn btn-sm">🔗 Join Class</a>` : ''}
+                    ${reg.completed ? `<span class="completed-badge">✨ +200 points earned!</span>` : ''}
+                </div>
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Error loading courses:', err);
+        document.getElementById('my-courses').innerHTML = '<p>Error loading courses.</p>';
+    }
+}
+    async function loadLeaderboard() {
+        const token = localStorage.getItem('token');
+        const res = await fetch('/api/users/leaderboard', {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const users = await res.json();
+        // Display
+    }
+    loadMyCourses();
+    loadLeaderboard();
+</script>

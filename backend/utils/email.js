@@ -1,0 +1,2 @@
+resetToken: String,
+resetTokenExpiry: Date,

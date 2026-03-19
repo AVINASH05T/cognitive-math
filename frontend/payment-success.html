@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Payment Successful - Cognitive Math</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-container {
+            max-width: 600px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            color: var(--success);
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        p {
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .receipt {
+            background: var(--light-bg);
+            padding: 1.2rem;
+            border-radius: var(--radius-md);
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--white);
+        }
+
+        .receipt-row:last-child {
+            border-bottom: none;
+        }
+
+        .receipt-label {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .receipt-value {
+            color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: var(--light-bg);
+            color: var(--primary-dark);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        @media (max-width: 480px) {
+            .success-container {
+                margin: 1.5rem;
+                padding: 1.5rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Help Icon -->
+    <div class="top-bar">
+        <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Payment%20Query'">
+            <i class="fas fa-question-circle"></i>
+            <span>Payment Support</span>
+        </div>
+        <div class="social-header" id="social-header"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <img id="logo-img" src="" alt="Cognitive Math" onerror="this.src='https://via.placeholder.com/45x45?text=CM'">
+                <span>Cognitive Math</span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+                <a href="#" id="dashboardLink">Dashboard</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="index.html" onclick="toggleMobileMenu()">Home</a>
+            <a href="courses.html" onclick="toggleMobileMenu()">Courses</a>
+            <a href="#" id="mobileDashboardLink" onclick="toggleMobileMenu()">Dashboard</a>
+        </div>
+    </div>
+
+    <div class="success-container">
+        <div class="success-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        
+        <h1>Payment Successful! 🎉</h1>
+        <p>Thank you for enrolling. Your payment has been processed successfully.</p>
+        
+        <div class="receipt" id="receipt">
+            <div class="receipt-row">
+                <span class="receipt-label">Course:</span>
+                <span class="receipt-value" id="course-name">Loading...</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Amount:</span>
+                <span class="receipt-value" id="amount">Loading...</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Date:</span>
+                <span class="receipt-value" id="date">Loading...</span>
+            </div>
+            <div class="receipt-row">
+                <span class="receipt-label">Transaction ID:</span>
+                <span class="receipt-value" id="transaction">Loading...</span>
+            </div>
+        </div>
+
+        <p style="margin: 1rem 0;">A confirmation email has been sent to your registered email address.</p>
+
+        <div class="btn-group">
+            <a href="dashboard/student.html" class="btn btn-primary">Go to Dashboard</a>
+            <a href="courses.html" class="btn btn-secondary">Browse More Courses</a>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Get user from localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        // Set dashboard links
+        const dashboardLink = document.getElementById('dashboardLink');
+        const mobileDashboardLink = document.getElementById('mobileDashboardLink');
+        
+        if (user.role === 'admin' || user.role === 'editor') {
+            dashboardLink.href = 'dashboard/admin.html';
+            mobileDashboardLink.href = 'dashboard/admin.html';
+        } else {
+            dashboardLink.href = 'dashboard/student.html';
+            mobileDashboardLink.href = 'dashboard/student.html';
+        }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Load site content (logo and social links)
+        async function loadSiteContent() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+                
+                // Logo
+                if (data.logo) {
+                    document.getElementById('logo-img').src = data.logo;
+                }
+
+                // Social Links (Header)
+                const socialHeader = document.getElementById('social-header');
+                if (data.socialLinks) {
+                    let socialHtml = '';
+                    const socialOrder = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin'];
+                    socialOrder.forEach(platform => {
+                        if (data.socialLinks[platform] && data.socialLinks[platform].visible) {
+                            let icon = '';
+                            switch(platform) {
+                                case 'facebook': icon = 'fab fa-facebook-f'; break;
+                                case 'twitter': icon = 'fab fa-twitter'; break;
+                                case 'instagram': icon = 'fab fa-instagram'; break;
+                                case 'youtube': icon = 'fab fa-youtube'; break;
+                                case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+                            }
+                            socialHtml += `<a href="${data.socialLinks[platform].url}" target="_blank"><i class="${icon}"></i></a>`;
+                        }
+                    });
+                    if (socialHtml) {
+                        socialHeader.innerHTML = socialHtml;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading site content:', err);
+            }
+        }
+
+        // Get payment details from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('courseId');
+        const paymentIntent = urlParams.get('payment_intent');
+        const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
+        const redirectStatus = urlParams.get('redirect_status');
+
+        // Confirm payment with backend
+        async function confirmPayment() {
+            if (!paymentIntent || !courseId) {
+                document.getElementById('course-name').textContent = 'Course information unavailable';
+                return;
+            }
+
+            try {
+                // Confirm payment with backend
+                const res = await fetch('/api/payments/confirm', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        paymentIntentId: paymentIntent,
+                        courseId: courseId
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Load course details
+                    const courseRes = await fetch(`/api/courses/${courseId}`);
+                    const course = await courseRes.json();
+
+                    document.getElementById('course-name').textContent = course.title;
+                    document.getElementById('amount').textContent = `₹${course.price}`;
+                    document.getElementById('date').textContent = new Date().toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                    document.getElementById('transaction').textContent = paymentIntent.slice(-8);
+                } else {
+                    console.error('Payment confirmation failed:', data.message);
+                }
+            } catch (err) {
+                console.error('Error confirming payment:', err);
+                document.getElementById('course-name').textContent = 'Error loading details';
+            }
+        }
+
+        if (paymentIntent && courseId) {
+            confirmPayment();
+        } else {
+            document.getElementById('course-name').textContent = 'Payment completed';
+            document.getElementById('amount').textContent = 'See dashboard';
+            document.getElementById('date').textContent = new Date().toLocaleDateString('en-IN');
+            document.getElementById('transaction').textContent = 'Confirmed';
+        }
+
+        // Initialize
+        loadSiteContent();
+    </script>
+</body>
+</html>

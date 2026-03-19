@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Student Dashboard - Cognitive Math</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .dashboard-header {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 1.5rem 2rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-header-left h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .dashboard-header-left p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .dashboard-header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .points-badge {
+            background: var(--white);
+            color: var(--primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .points-badge i {
+            font-size: 1.2rem;
+            color: #fbbf24;
+        }
+
+        .header-profile-link {
+            text-decoration: none;
+        }
+
+        .header-profile-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid white;
+            transition: transform 0.3s;
+        }
+
+        .header-profile-img:hover {
+            transform: scale(1.1);
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.2rem;
+            margin: 2rem 0;
+        }
+        
+        .stat-box {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: transform 0.3s;
+            border: 1px solid var(--light-bg);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .stat-box h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-box p {
+            color: var(--gray);
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-header h2 i {
+            color: var(--primary);
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+            position: relative;
+            border: 1px solid var(--light-bg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.8rem;
+            z-index: 1;
+        }
+
+        .course-image-container {
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+        }
+
+        .course-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .course-card:hover .course-image {
+            transform: scale(1.05);
+        }
+
+        .course-content {
+            padding: 1.2rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .course-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-upcoming {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-attended {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-join {
+            background: #25D366;
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.3s;
+        }
+
+        .btn-join:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .points-earned {
+            background: var(--success);
+            color: var(--white);
+            padding: 0.3rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            color: var(--gray);
+            border: 2px dashed var(--light-bg);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+
+        .empty-state a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .empty-state a:hover {
+            text-decoration: underline;
+        }
+
+        .leaderboard-section {
+            margin-top: 2rem;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .leaderboard-header h2 {
+            font-size: 1.3rem;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .leaderboard-header h2 i {
+            color: #fbbf24;
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1rem;
+            background: var(--light-bg);
+            border-radius: var(--radius-md);
+            transition: transform 0.3s;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            background: var(--primary-light);
+            color: var(--white);
+        }
+
+        .leaderboard-item:hover .leaderboard-points {
+            color: var(--white);
+        }
+
+        .leaderboard-rank {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-rank.gold {
+            background: #fbbf24;
+        }
+
+        .leaderboard-rank.silver {
+            background: #94a3b8;
+        }
+
+        .leaderboard-rank.bronze {
+            background: #b45309;
+        }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+
+        .leaderboard-points {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .your-rank {
+            background: var(--primary-light);
+            color: var(--white);
+            padding: 0.8rem 1rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .testimonial-form {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            margin-top: 2rem;
+            border: 1px solid var(--light-bg);
+        }
+
+        .testimonial-form h3 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+        }
+
+        .testimonial-form p {
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--light-bg);
+            border-radius: var(--radius-md);
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(43, 122, 120, 0.1);
+        }
+
+        .btn-submit {
+            background: var(--gradient);
+            color: var(--white);
+            border: none;
+            padding: 0.9rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .course-actions {
+                justify-content: center;
+            }
+            
+            .dashboard-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .dashboard-header-right {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .points-badge {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Bar with Help Icon -->
+    <div class="top-bar">
+        <div class="help-icon" onclick="window.location.href='mailto:info@cognitivemath.com?subject=Student%20Help'">
+            <i class="fas fa-question-circle"></i>
+            <a href="mailto:info@cognitivemath.com?subject=Student%20Help">Help & Support</a>
+        </div>
+        <div class="social-header" id="social-header"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <img id="logo-img" src="" alt="Cognitive Math" onerror="this.src='https://via.placeholder.com/45x45?text=CM'">
+                <span>Cognitive Math</span>
+            </a>
+            <div class="nav-links">
+                <a href="../index.html">Home</a>
+                <a href="../courses.html">Courses</a>
+                <a href="student.html">Dashboard</a>
+                <a href="../profile.html">Profile</a>
+                <a href="#" id="logoutLink">Logout</a>
+            </div>
+            <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-close" onclick="toggleMobileMenu()">
+            <i class="fas fa-times"></i>
+        </div>
+        <div class="mobile-menu-links">
+            <a href="../index.html" onclick="toggleMobileMenu()">Home</a>
+            <a href="../courses.html" onclick="toggleMobileMenu()">Courses</a>
+            <a href="student.html" onclick="toggleMobileMenu()">Dashboard</a>
+            <a href="../profile.html" onclick="toggleMobileMenu()">Profile</a>
+            <a href="#" id="mobileLogoutLink" onclick="handleMobileLogout()">Logout</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="dashboard-header-left">
+                <h1>Welcome back, <span id="student-name">Student</span>! 👋</h1>
+                <p>Your learning journey continues. Keep up the great work!</p>
+            </div>
+            <div class="dashboard-header-right">
+                <div class="points-badge">
+                    <i class="fas fa-star"></i>
+                    <span id="total-points">0</span> Points
+                </div>
+                <a href="../profile.html" class="header-profile-link">
+                    <img id="header-profile-img" src="https://img.icons8.com/fluency/96/000000/user-male-circle.png" 
+                         class="header-profile-img" alt="Profile">
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="dashboard-stats">
+            <div class="stat-box">
+                <h3 id="enrolled-count">0</h3>
+                <p>Enrolled Courses</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="completed-count">0</h3>
+                <p>Completed</p>
+            </div>
+            <div class="stat-box">
+                <h3 id="attended-count">0</h3>
+                <p>Attended</p>
+            </div>
+        </div>
+
+        <!-- My Courses Section -->
+        <div class="section-header">
+            <h2><i class="fas fa-book-open"></i> My Courses</h2>
+            <a href="../courses.html" class="btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                <i class="fas fa-plus"></i> Browse Courses
+            </a>
+        </div>
+        
+        <div class="courses-grid" id="courses-container">
+            <div class="loading-spinner"></div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div class="leaderboard-section">
+            <div class="leaderboard-header">
+                <h2><i class="fas fa-trophy"></i> Leaderboard</h2>
+                <span class="points-badge" style="padding: 0.4rem 1rem; font-size: 0.9rem;">
+                    <i class="fas fa-star"></i> Top Performers
+                </span>
+            </div>
+            
+            <div id="your-rank-container" style="display: none;">
+                <div class="your-rank" id="your-rank"></div>
+            </div>
+
+            <div class="leaderboard-list" id="leaderboard-container">
+                <div class="loading-spinner"></div>
+            </div>
+        </div>
+
+        <!-- Testimonial Form Section -->
+        <div class="testimonial-form">
+            <h3><i class="fas fa-comment-dots"></i> Share Your Experience</h3>
+            <p>Your feedback helps us improve and motivates other students!</p>
+            
+            <form id="testimonialForm">
+                <div class="form-group">
+                    <label>Your Rating</label>
+                    <select id="rating" required>
+                        <option value="">Select a rating</option>
+                        <option value="5">⭐⭐⭐⭐⭐ - Excellent</option>
+                        <option value="4">⭐⭐⭐⭐ - Very Good</option>
+                        <option value="3">⭐⭐⭐ - Good</option>
+                        <option value="2">⭐⭐ - Fair</option>
+                        <option value="1">⭐ - Needs Improvement</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Your Comment</label>
+                    <textarea id="comment" rows="4" placeholder="Share your learning experience... What did you like? How can we improve?" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-submit" id="submitTestimonialBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Testimonial
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mobile Back Button Script -->
+    <script>
+        // Add back button for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const backButton = document.createElement('div');
+            backButton.className = 'mobile-back';
+            backButton.innerHTML = '<i class="fas fa-arrow-left"></i> Back';
+            backButton.style.cssText = 'display: none; position: fixed; top: 10px; left: 10px; z-index: 2500; background: var(--primary); color: white; padding: 10px 15px; border-radius: 30px; font-size: 14px; cursor: pointer; box-shadow: var(--shadow-md); align-items: center; gap: 5px;';
+            backButton.onclick = function() {
+                if (document.referrer) {
+                    history.back();
+                } else {
+                    window.location.href = '../index.html';
+                }
+            };
+            document.body.appendChild(backButton);
+            
+            function updateBackButton() {
+                if (window.innerWidth <= 768) {
+                    backButton.style.display = 'flex';
+                } else {
+                    backButton.style.display = 'none';
+                }
+            }
+            
+            updateBackButton();
+            window.addEventListener('resize', updateBackButton);
+        });
+    </script>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '../login.html';
+        }
+
+        // Mobile menu functions
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('active');
+        }
+
+        function handleMobileLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        }
+
+        // Load profile image for header
+        async function loadProfileImage() {
+            try {
+                const res = await fetch('/api/users/profile', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const userData = await res.json();
+                
+                if (userData.profileImage) {
+                    document.getElementById('header-profile-img').src = userData.profileImage;
+                }
+            } catch (err) {
+                console.error('Error loading profile image:', err);
+            }
+        }
+
+        // Load logo and social links
+        async function loadSiteContent() {
+            try {
+                const res = await fetch('/api/site-content');
+                const data = await res.json();
+                
+                // Logo
+                if (data.logo) {
+                    document.getElementById('logo-img').src = data.logo;
+                }
+
+                // Social Links (Header)
+                const socialHeader = document.getElementById('social-header');
+                if (data.socialLinks) {
+                    let socialHtml = '';
+                    const platforms = ['facebook', 'twitter', 'instagram', 'youtube', 'linkedin'];
+                    platforms.forEach(platform => {
+                        if (data.socialLinks[platform] && data.socialLinks[platform].visible) {
+                            let icon = '';
+                            switch(platform) {
+                                case 'facebook': icon = 'fab fa-facebook-f'; break;
+                                case 'twitter': icon = 'fab fa-twitter'; break;
+                                case 'instagram': icon = 'fab fa-instagram'; break;
+                                case 'youtube': icon = 'fab fa-youtube'; break;
+                                case 'linkedin': icon = 'fab fa-linkedin-in'; break;
+                            }
+                            socialHtml += `<a href="${data.socialLinks[platform].url}" target="_blank"><i class="${icon}"></i></a>`;
+                        }
+                    });
+                    if (socialHtml) {
+                        socialHeader.innerHTML = socialHtml;
+                    }
+                }
+            } catch (err) {
+                console.error('Error loading site content:', err);
+            }
+        }
+
+        // Load user profile
+        async function loadProfile() {
+            try {
+                const res = await fetch('/api/users/profile', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                if (!res.ok) {
+                    throw new Error('Failed to load profile');
+                }
+                
+                const user = await res.json();
+                
+                document.getElementById('student-name').textContent = user.name || 'Student';
+                document.getElementById('total-points').textContent = user.points || 0;
+            } catch (err) {
+                console.error('Error loading profile:', err);
+                if (err.message.includes('401')) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    window.location.href = '../login.html';
+                }
+            }
+        }
+
+        // Load enrolled courses
+        async function loadEnrolledCourses() {
+            try {
+                const res = await fetch('/api/registrations/my', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to load courses');
+                }
+
+                const registrations = await res.json();
+                
+                // Update stats
+                document.getElementById('enrolled-count').textContent = registrations.length;
+                
+                const completedCount = registrations.filter(r => r.completed).length;
+                document.getElementById('completed-count').textContent = completedCount;
+                
+                const attendedCount = registrations.filter(r => r.attended).length;
+                document.getElementById('attended-count').textContent = attendedCount;
+                
+                const container = document.getElementById('courses-container');
+                
+                if (registrations.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <h3>No Courses Yet</h3>
+                            <p>You haven't enrolled in any courses yet. <a href="../courses.html">Browse our courses</a> to get started!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = registrations.map(reg => {
+                    let statusClass = 'status-upcoming';
+                    let statusText = '⏳ Upcoming';
+                    
+                    if (reg.completed) {
+                        statusClass = 'status-completed';
+                        statusText = '✅ Completed';
+                    } else if (reg.attended) {
+                        statusClass = 'status-attended';
+                        statusText = '📝 Attended';
+                    }
+                    
+                    const courseImage = reg.course?.image || 'https://img.icons8.com/fluency/96/000000/math.png';
+                    
+                    return `
+                        <div class="course-card">
+                            <div class="course-badge ${reg.course?.price === 0 ? 'free' : ''}">
+                                ${reg.course?.price === 0 ? 'FREE' : 'PAID'}
+                            </div>
+                            <div class="course-image-container">
+                                <img src="${courseImage}" 
+                                     class="course-image" 
+                                     alt="${reg.course?.title}"
+                                     onerror="this.src='https://img.icons8.com/fluency/96/000000/math.png'">
+                            </div>
+                            <div class="course-content">
+                                <h3 class="course-title">${reg.course?.title || 'Course'}</h3>
+                                <div class="course-meta">
+                                    <span><i class="fas fa-layer-group"></i> Grade ${reg.course?.grade || 'N/A'}</span>
+                                    <span><i class="fas fa-clock"></i> ${reg.course?.timing || 'Flexible'}</span>
+                                </div>
+                                <div>
+                                    <span class="status-badge ${statusClass}">${statusText}</span>
+                                </div>
+                                
+                                <div class="course-actions">
+                                    ${reg.course?.zoomLink ? `
+                                        <a href="${reg.course.zoomLink}" target="_blank" class="btn-join">
+                                            <i class="fas fa-video"></i> Join Class
+                                        </a>
+                                    ` : ''}
+                                    ${reg.completed ? `
+                                        <span class="points-earned">
+                                            <i class="fas fa-star"></i> +200 pts
+                                        </span>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Error loading courses:', err);
+                document.getElementById('courses-container').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Courses</h3>
+                        <p>Please try refreshing the page.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load leaderboard
+        async function loadLeaderboard() {
+            try {
+                const res = await fetch('/api/users/leaderboard', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (!res.ok) {
+                    throw new Error('Failed to load leaderboard');
+                }
+
+                const users = await res.json();
+                
+                const container = document.getElementById('leaderboard-container');
+                
+                if (users.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; padding: 2rem;">No leaderboard data available</p>';
+                    return;
+                }
+
+                // Get current user's rank
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                const userRank = users.findIndex(u => u.email === user.email) + 1;
+                
+                if (userRank > 0) {
+                    document.getElementById('your-rank-container').style.display = 'block';
+                    document.getElementById('your-rank').innerHTML = `
+                        <i class="fas fa-crown"></i> Your Rank: #${userRank} with ${users[userRank-1]?.points || 0} points
+                    `;
+                }
+
+                container.innerHTML = users.slice(0, 10).map((user, index) => {
+                    let rankClass = '';
+                    if (index === 0) rankClass = 'gold';
+                    else if (index === 1) rankClass = 'silver';
+                    else if (index === 2) rankClass = 'bronze';
+                    
+                    return `
+                        <div class="leaderboard-item">
+                            <div class="leaderboard-rank ${rankClass}">${index + 1}</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">${user.name}</div>
+                            </div>
+                            <div class="leaderboard-points">${user.points || 0} pts</div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (err) {
+                console.error('Error loading leaderboard:', err);
+            }
+        }
+
+        // Submit testimonial
+        document.getElementById('testimonialForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const rating = document.getElementById('rating').value;
+            const comment = document.getElementById('comment').value;
+
+            if (!rating || !comment) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitTestimonialBtn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/testimonials', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ 
+                        rating: parseInt(rating), 
+                        comment 
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert('✅ Thank you! Your testimonial has been submitted and is awaiting approval.');
+                    document.getElementById('testimonialForm').reset();
+                } else {
+                    alert(data.message || 'Failed to submit testimonial');
+                }
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Error submitting testimonial. Please try again.');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Logout function
+        document.getElementById('logoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+
+        document.getElementById('mobileLogoutLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '../index.html';
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            if (mobileMenu && mobileMenu.classList.contains('active') && 
+                !mobileMenu.contains(e.target) && 
+                !toggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        loadSiteContent();
+        loadProfileImage();
+        loadProfile();
+        loadEnrolledCourses();
+        loadLeaderboard();
+
+        // Auto-refresh data every 30 seconds
+        setInterval(() => {
+            loadProfile();
+            loadEnrolledCourses();
+            loadLeaderboard();
+        }, 30000);
+    </script>
+</body>
+</html>
